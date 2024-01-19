@@ -15,7 +15,7 @@ class MLCWizard(ctk.CTk):
         self.F.pack(fill="both", expand=True)
 
         self.num_of_leafpairs = 80
-        self.leafpairs = [LeafPair(self.F) for i in range(self.num_of_leafpairs)]
+        self.leafpairs = [LeafPair(self.F, i) for i in range(self.num_of_leafpairs)]
         [self.leafpairs[i].pack(fill="x", expand=True) for i in range(self.num_of_leafpairs)]
 
     def on_closing(self):
