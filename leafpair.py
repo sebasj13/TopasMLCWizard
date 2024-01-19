@@ -5,25 +5,33 @@ class LeafPair(ctk.CTkFrame):
         self.parent = parent
         super().__init__(self.parent)
 
-        self.CL = ctk.CTkCanvas(self, width=150, height=20, highlightthickness=0, borderwidth=0, name="leftleaf")
+        self.width = 150
+
+        self.CL = ctk.CTkCanvas(self, width=self.width, height=10, highlightthickness=0, borderwidth=0, name="leftleaf")
         self.CL.config(cursor="hand2")
         self.CL.pack(side="left")
-        self.CR = ctk.CTkCanvas(self, width=150, height=20, highlightthickness=0, borderwidth=0, name="rightleaf")
+        self.CR = ctk.CTkCanvas(self, width=self.width, height=10, highlightthickness=0, borderwidth=0, name="rightleaf")
         self.CR.config(cursor="hand2")  
         self.CR.pack(side="right")
 
-        self.leftleaf = self.CL.create_rectangle(0,0,149,19, fill="blue")
-        self.leftleaftext = self.CL.create_text(75,10, text="LL: 150", fill="black")
+        self.leftleaf = self.CL.create_rectangle(0,0,self.width,10, fill="blue")
+        self.leftleaftext = self.CL.create_text(100,5, text="LL: 150", fill="black", anchor="w")
         self.CL.tag_bind(self.leftleaf, "<Button-1>", self.drag_start)
         self.CL.tag_bind(self.leftleaf, "<B1-Motion>", self.drag_motion)
         self.CL.tag_bind(self.leftleaftext, "<Button-1>", self.drag_start)
         self.CL.tag_bind(self.leftleaftext, "<B1-Motion>", self.drag_motion)
-        self.rightleaf = self.CR.create_rectangle(0,0,149,19,  fill="red")
-        self.rightleaftext = self.CR.create_text(75,10, text="RL: 650", fill="black")
+        self.rightleaf = self.CR.create_rectangle(0,0,self.width,10,  fill="red")
+        self.rightleaftext = self.CR.create_text(60,5, text="RL: 1150", fill="black", anchor="e")
         self.CR.tag_bind(self.rightleaf, "<Button-1>", self.drag_start)
         self.CR.tag_bind(self.rightleaf, "<B1-Motion>", self.drag_motion)
         self.CR.tag_bind(self.rightleaftext, "<Button-1>", self.drag_start)
         self.CR.tag_bind(self.rightleaftext, "<B1-Motion>", self.drag_motion)
+
+    def set_left_leaf(self, value):
+        self.nametowidget("leftleaf").place(x=value-self.nametowidget("leftleaf").winfo_width())
+
+    def set_right_leaf(self, value):
+        self.nametowidget("rightleaf").place(x=value)
 
     def drag_start(self, event):
         widget = event.widget
