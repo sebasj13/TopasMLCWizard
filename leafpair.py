@@ -16,11 +16,11 @@ class LeafPair():
 
         self.y = interp1d([0,79], [-200,195])(number) + 2.5
 
-        self.leftleaf = self.C.create_rectangle(self.pixelx[0]+1,self.pixely,self.w+1,self.pixely+self.h, fill="grey80")
+        self.leftleaf = self.C.create_rectangle(-1000+self.pixelx[0]+1,self.pixely,self.w+1,self.pixely+self.h, fill="grey40")
         self.C.tag_bind(self.leftleaf, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.leftleaf, "<B1-Motion>", self.drag_motion)
 
-        self.rightleaf = self.C.create_rectangle(self.pixelx[1]+1,self.pixely,self.pixelx[1]+self.w+1,self.pixely+self.h,  fill="grey80")
+        self.rightleaf = self.C.create_rectangle(self.pixelx[1]+1,self.pixely,self.pixelx[1]+self.w+1+1000,self.pixely+self.h,  fill="grey40")
         self.C.tag_bind(self.rightleaf, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.rightleaf, "<B1-Motion>", self.drag_motion)
 
@@ -32,6 +32,9 @@ class LeafPair():
         self.rightleaftext = self.C.create_text(self.pixelx[1]+self.w//2,self.pixely + self.h//2, text=f"RL{self.number}: {self.xscale(960)}", fill="black", anchor="e", font=("Arial",9))
         self.C.tag_bind(self.rightleaftext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.rightleaftext, "<B1-Motion>", self.drag_motion)
+
+        self.set_left_leaf(-200.0)
+        self.set_right_leaf(200.0)
 
 
     def GetTextDimensions(self, text):
@@ -57,11 +60,10 @@ class LeafPair():
         return int(interp1d([-200,200],[0,960])(value))
     
     def set_left_leaf(self, value):
-        self.C.moveto(self.leftleaf,x=self.inverse_xscale(value))
+        self.C.moveto(self.leftleaf,x=-1000+self.inverse_xscale(value))
         self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {value}", anchor="w")
         self.C.moveto(self.leftleaftext,x=self.inverse_xscale(value)+74+(50-self.GetTextDimensions(f"LL{self.number}: {value}")[0]))
         self.pixelx[0] = self.inverse_xscale(value)
-        print(self.pixelx)
 
     def set_right_leaf(self, value):
         self.C.moveto(self.rightleaf,x=self.inverse_xscale(value)+150)
@@ -102,7 +104,7 @@ class LeafPair():
                 self.pixelx[1] = rightleafpos
 
             self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(x)}", anchor="w")
-            self.C.moveto(self.leftleaf,x=x)
+            self.C.moveto(self.leftleaf,x=-1000+x)
             self.C.moveto(self.leftleaftext,x=x+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
             self.pixelx[0] = x
 
@@ -112,7 +114,7 @@ class LeafPair():
                 if leftleafpos < 0:
                     leftleafpos = 0
                     x=150
-                self.C.moveto(self.leftleaf,x=leftleafpos)
+                self.C.moveto(self.leftleaf,x=-1000+leftleafpos)
                 self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(leftleafpos)}", anchor="w")
                 self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
                 self.pixelx[0] = leftleafpos
