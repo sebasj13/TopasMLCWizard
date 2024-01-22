@@ -17,13 +17,24 @@ class JawPair:
         self.set_bottom_jaw(-200)
 
         self.C.tag_bind(self.topjaw, "<Button-1>", self.drag_start)
+        self.C.tag_bind(self.topjaw, "<Enter>", self.hand_enter)
+        self.C.tag_bind(self.topjaw, "<Leave>", self.hand_leave)
         self.C.tag_bind(self.topjaw, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.topjawtext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.topjawtext, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.bottomjaw, "<Button-1>", self.drag_start)
+        self.C.tag_bind(self.bottomjaw, "<Enter>", self.hand_enter)
+        self.C.tag_bind(self.bottomjaw, "<Leave>", self.hand_leave)
         self.C.tag_bind(self.bottomjaw, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.bottomjawtext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.bottomjawtext, "<B1-Motion>", self.drag_motion)
+
+
+    def hand_enter(self, event):
+        self.C.config(cursor="hand2")
+
+    def hand_leave(self, event):
+        self.C.config(cursor="arrow")
 
     def yscale(self, value):
         return round(float(interp1d([980,20],[-200,200])(value)),1)
@@ -50,8 +61,10 @@ class JawPair:
     def drag_motion(self, event):
 
         if self.name == "topjaw":
+            self.C.tag_unbind(self.topjaw, "<Leave>")
             cur_y = self.pixely[0]
         else:
+            self.C.tag_unbind(self.bottomjaw, "<Leave>")
             cur_y = self.pixely[1]
 
         y = cur_y + event.y - self._drag_start_y
@@ -88,3 +101,8 @@ class JawPair:
             self.C.moveto(self.bottomjaw,y=y)
             self.C.moveto(self.bottomjawtext,y=y+0)
             self.pixely[1] = y
+
+
+    def drag_end(self, event):
+        self.C.tag_bind(self.topjaw, "<Leave>", self.hand_leave)
+        self.C.tag_bind(self.bottomjaw, "<Leave>", self.hand_leave)
