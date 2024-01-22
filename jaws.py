@@ -13,8 +13,8 @@ class JawPair:
         self.bottomjaw = self.C.create_rectangle(0,980,1260,1980, fill="grey40")
         self.topjawtext = self.C.create_text(630,10, text=f"Top Jaw: {self.yscale(20)}", fill="black", anchor="center", font=("Arial", 9))
         self.bottomjawtext = self.C.create_text(630,990, text=f"Bottom Jaw: {self.yscale(980)}", fill="black", anchor="center", font=("Arial", 9))
-        self.C.moveto(self.topjawtext,y=6)
-        self.C.moveto(self.bottomjawtext,y=980+0)
+        self.set_top_jaw(200)
+        self.set_bottom_jaw(-200)
 
         self.C.tag_bind(self.topjaw, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.topjaw, "<B1-Motion>", self.drag_motion)
@@ -33,7 +33,7 @@ class JawPair:
     
     def set_top_jaw(self, value):
         self.C.moveto(self.topjaw,y=self.inverse_yscale(value)-self.h)
-        self.C.moveto(self.topjawtext,y=self.inverse_yscale(value)-14)
+        self.C.moveto(self.topjawtext,y=self.inverse_yscale(value)-13)
         self.C.itemconfigure(self.topjawtext, text=f"Top Jaw: {value}", anchor="center")
         self.pixely[0] = self.inverse_yscale(value)
 
@@ -45,7 +45,7 @@ class JawPair:
 
     def drag_start(self, event):
         self._drag_start_y = event.y
-        self.name = {1:"topjaw", 0:"bottomjaw"}[self.C.find_closest(event.x, event.y)[0]%2]
+        self.name = {0:"topjaw", 1:"bottomjaw"}[self.C.find_closest(event.x, event.y)[0]%2]
 
     def drag_motion(self, event):
 
@@ -73,7 +73,7 @@ class JawPair:
 
             self.C.itemconfigure(self.topjawtext, text=f"Top Jaw: {self.yscale(y)}", anchor="center")
             self.C.moveto(self.topjaw,y=y-self.h)
-            self.C.moveto(self.topjawtext,y=y-14)
+            self.C.moveto(self.topjawtext,y=y-13)
             self.pixely[0] = y
 
         else:
@@ -81,7 +81,7 @@ class JawPair:
                 
                 self.C.itemconfigure(self.topjawtext, text=f"Top Jaw: {self.yscale(y)}", anchor="center")
                 self.C.moveto(self.topjaw,y=y-self.h)
-                self.C.moveto(self.topjawtext,y=y-14)
+                self.C.moveto(self.topjawtext,y=y-13)
                 self.pixely[0] = y
                     
             self.C.itemconfigure(self.bottomjawtext, text=f"Bottom Jaw: {self.yscale(y)}", anchor="center")

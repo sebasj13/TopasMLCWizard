@@ -12,7 +12,7 @@ class LeafPair():
         self.h = 10
 
         self.pixelx = [0,1110]
-        self.pixely = 20 + number*12 +1
+        self.pixely = 20 + number*12 +2
 
         self.y = interp1d([0,79], [-200,195])(number) + 2.5
 
@@ -61,6 +61,7 @@ class LeafPair():
         self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {value}", anchor="w")
         self.C.moveto(self.leftleaftext,x=self.inverse_xscale(value)+74+(50-self.GetTextDimensions(f"LL{self.number}: {value}")[0]))
         self.pixelx[0] = self.inverse_xscale(value)
+        print(self.pixelx)
 
     def set_right_leaf(self, value):
         self.C.moveto(self.rightleaf,x=self.inverse_xscale(value)+150)
@@ -70,7 +71,7 @@ class LeafPair():
 
     def drag_start(self, event):
         self._drag_start_x = event.x
-        self.name = {0:"rightleaf", 1:"leftleaf"}[self.C.find_closest(event.x, event.y)[0]%2]
+        self.name = {1:"rightleaf", 0:"leftleaf"}[self.C.find_closest(event.x, event.y)[0]%2]
 
     def drag_motion(self, event):
 
