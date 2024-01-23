@@ -36,11 +36,13 @@ class LeafPair():
         self.C.tag_bind(self.rightleaf, "<ButtonRelease-1>", self.drag_end)
 
         self.leftleaftext = self.C.create_text(self.pixelx[0]+self.w//2,self.pixely + self.h//2, text=f"LL{self.number}: {self.xscale(0)}", fill="black", anchor="w", font=("Arial",9))
+        self.C.tag_bind(self.leftleaftext, "<Enter>", self.hand_enter)
         self.C.tag_bind(self.leftleaftext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.leftleaftext, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.leftleaftext, "<ButtonRelease-1>", self.drag_end)
 
         self.rightleaftext = self.C.create_text(self.pixelx[1]+self.w//2,self.pixely + self.h//2, text=f"RL{self.number}: {self.xscale(960)}", fill="black", anchor="e", font=("Arial",9))
+        self.C.tag_bind(self.rightleaftext, "<Enter>", self.hand_enter)
         self.C.tag_bind(self.rightleaftext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.rightleaftext, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.rightleaftext, "<ButtonRelease-1>", self.drag_end)
@@ -81,6 +83,7 @@ class LeafPair():
         self.C.moveto(self.leftleaf,x=-1000+self.inverse_xscale(x))
         self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {x}", anchor="w")
         self.C.moveto(self.leftleaftext,x=self.inverse_xscale(x)+74+(50-self.GetTextDimensions(f"LL{self.number}: {x}")[0]))
+        self.pixelx[0] = self.inverse_xscale(x)
 
         x = self.inverse_xscale(x)
         if x+150 > self.pixelx[1]:
@@ -93,16 +96,16 @@ class LeafPair():
             self.C.moveto(self.rightleaftext,x=rightleafpos+16)
             self.pixelx[1] = rightleafpos
 
-        self.pixelx[0] = x
 
     def set_right_leaf(self, x):
         self.C.moveto(self.rightleaf,x=self.inverse_xscale(x)+150)
         self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {x}", anchor="e")
         self.C.moveto(self.rightleaftext,x=self.inverse_xscale(x)+150+16)
+        self.pixelx[1] = x+self.w
 
-        x = self.inverse_xscale(x)
+        x = self.inverse_xscale(x)+150
         if x <= self.pixelx[0]+150:
-            leftleafpos = x
+            leftleafpos = x-150
             if leftleafpos < 0:
                 leftleafpos = 0
                 x=150
@@ -111,7 +114,6 @@ class LeafPair():
             self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
             self.pixelx[0] = leftleafpos
 
-        self.pixelx[1] = x+self.w
 
     def drag_start(self, event):
         self._drag_start_x = event.x
