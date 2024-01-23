@@ -80,9 +80,6 @@ class CF(ctk.CTkFrame):
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqframe.grid(row=3, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
-
-
-
     def square(self, value=None):
         if value == None:
             field_size = 10*float(self.squareentry.get())
