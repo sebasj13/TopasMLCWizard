@@ -9,6 +9,7 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(0, weight=0)
         self.rowconfigure(1, weight=0, minsize=300)
         self.rowconfigure(2, weight=0)
+        self.rowconfigure(3, weight=1, minsize=300)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -67,7 +68,20 @@ class CF(ctk.CTkFrame):
 
         #DRAW RECTANGLE
         self.drawrectbutton = ctk.CTkButton(self, text="Draw Rectangle", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.drawrect)
-        self.drawrectbutton.grid(row=2, column=0, pady=(5,5), sticky="nsew")
+        self.drawrectbutton.grid(row=2, column=0, columnspan=2, pady=(5,5), sticky="nsew")
+
+        #FIELD SEQUENCE BROWSER
+        self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
+        self.fieldseqframe.grid_propagate(False)
+        self.fieldseqframe.rowconfigure(0, weight=0)
+        self.fieldseqframe.rowconfigure(1, weight=1)
+        self.fieldseqframe.columnconfigure(0, weight=1)
+        self.fieldseqtitle = ctk.CTkLabel(self.fieldseqframe, text="Field Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B")
+        self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.fieldseqframe.grid(row=3, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+
+
+
 
     def square(self, value=None):
         if value == None:
@@ -118,6 +132,8 @@ class CF(ctk.CTkFrame):
             self.tooltip = self.parent.C.create_text(900,745, text="", fill="yellow", anchor="center", font=("Arial", 9))
 
         def mouse_motion(event):
+            if self.parent.C.cget("cursor") != "crosshair":
+                self.parent.C.config(cursor="crosshair")
             try:
                 x1, y1 = event.x, event.y
                 x1 = round(self.parent.C.leafpairs[0].xscale(x1-150)/10,2)
@@ -148,7 +164,8 @@ class CF(ctk.CTkFrame):
             self.parent.C.jawpair.set_top_jaw(y1)
             self.parent.C.jawpair.set_bottom_jaw(y2)
                         
-            self.parent.C.unbind("<Enter>")
+            self.parent.C.unbind("<Enter>")#
+            self.parent.C.unbind("<Motion>")
             self.parent.C.unbind("<Button-1>")
             self.parent.C.unbind("<B1-Motion>")
             self.parent.C.unbind("<ButtonRelease-1>")
