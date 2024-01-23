@@ -9,8 +9,8 @@ class JawPair:
         self.w = 1260
         self.h = 1000
 
-        self.topjaw = self.C.create_rectangle(0,-980,1260,20, fill="grey20")
-        self.bottomjaw = self.C.create_rectangle(0,980,1260,1980, fill="grey20")
+        self.topjaw = self.C.create_rectangle(0,-980,1260,20, fill="grey60")
+        self.bottomjaw = self.C.create_rectangle(0,980,1260,1980, fill="grey60")
         self.topjawtext = self.C.create_text(630,10, text=f"Top Jaw: {self.yscale(20)}", fill="black", anchor="center", font=("Arial", 9))
         self.bottomjawtext = self.C.create_text(630,990, text=f"Bottom Jaw: {self.yscale(980)}", fill="black", anchor="center", font=("Arial", 9))
         self.set_top_jaw(200)
