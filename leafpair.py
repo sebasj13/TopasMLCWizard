@@ -101,7 +101,7 @@ class LeafPair():
         self.C.moveto(self.rightleaf,x=self.inverse_xscale(x)+150)
         self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {x}", anchor="e")
         self.C.moveto(self.rightleaftext,x=self.inverse_xscale(x)+150+16)
-        self.pixelx[1] = x+self.w
+        self.pixelx[1] = self.inverse_xscale(x)+self.w
 
         x = self.inverse_xscale(x)+150
         if x <= self.pixelx[0]+150:
@@ -128,7 +128,6 @@ class LeafPair():
             cur_x = self.pixelx[1]
 
         x = cur_x + event.x - self._drag_start_x
-        self._drag_start_x = event.x
 
         if x < 0:
             x = 0
@@ -156,8 +155,8 @@ class LeafPair():
             if self.left_selected and other == False:
                 for i in range(len(self.C.leafpairs)):
                     if self.C.leafpairs[i].number != self.number and self.C.leafpairs[i].left_selected:
-                        self.C.leafpairs[i].drag_start(event)
-                        self.C.leafpairs[i]._drag_start_x = event.x
+                        self.C.leafpairs[i].name = "leftleaf"
+                        self.C.leafpairs[i]._drag_start_x = self._drag_start_x
                         self.C.leafpairs[i].drag_motion(event, other=True)
 
         else:
@@ -179,13 +178,33 @@ class LeafPair():
             if self.right_selected and other == False:
                 for i in range(len(self.C.leafpairs)):
                     if self.C.leafpairs[i].number != self.number and self.C.leafpairs[i].right_selected:
-                        self.C.leafpairs[i].drag_start(event)
-                        self.C.leafpairs[i]._drag_start_x = event.x
+                        self.C.leafpairs[i].name = "rightleaf"
+                        self.C.leafpairs[i]._drag_start_x = self._drag_start_x
                         self.C.leafpairs[i].drag_motion(event, other=True)
+
+        self._drag_start_x = event.x
 
     def drag_end(self, event):
         self.C.tag_bind(self.leftleaf, "<Leave>", self.hand_leave)
         self.C.tag_bind(self.rightleaf, "<Leave>", self.hand_leave)
+        if self.left_selected:
+            if self.name == "leftleaf":
+                self.left_selected = False
+                self.C.itemconfigure(self.leftleaf, fill="grey40")
+                self.C.itemconfigure(self.leftleaftext, fill="black")
+                for i in range(len(self.C.leafpairs)):
+                    if self.C.leafpairs[i].number != self.number and self.C.leafpairs[i].left_selected:
+                        self.C.leafpairs[i].name = "leftleaf"
+                        self.C.leafpairs[i].drag_end(event)
+        elif self.right_selected:
+            if self.name == "rightleaf":
+                self.right_selected = False
+                self.C.itemconfigure(self.rightleaf, fill="grey40")
+                self.C.itemconfigure(self.rightleaftext, fill="black")
+                for i in range(len(self.C.leafpairs)):
+                    if self.C.leafpairs[i].number != self.number and self.C.leafpairs[i].right_selected:
+                        self.C.leafpairs[i].name = "rightleaf"
+                        self.C.leafpairs[i].drag_end(event)
 
     def select_left_leaf(self, event):
         if self.left_selected:
