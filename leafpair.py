@@ -51,14 +51,17 @@ class LeafPair():
         self.set_left_leaf(-200.0)
         self.set_right_leaf(200.0)
 
+
+    def get_leaf_positions(self):
+        return [float(self.C.itemcget(self.leftleaftext, "text").split(":")[1].strip()), float(self.C.itemcget(self.rightleaftext, "text").split(":")[1].strip())]
+
     def hand_enter(self, event):
         self.C.config(cursor="hand2")
 
     def hand_leave(self, event):
         self.C.config(cursor="arrow")
 
-
-    def GetTextDimensions(self, text):
+    def get_text_dimensions(self, text):
         class SIZE(ctypes.Structure):
             _fields_ = [("cx", ctypes.c_long), ("cy", ctypes.c_long)]
 
@@ -83,7 +86,7 @@ class LeafPair():
     def set_left_leaf(self, x):
         self.C.moveto(self.leftleaf,x=-960+self.inverse_xscale(x))
         self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {x}", anchor="w")
-        self.C.moveto(self.leftleaftext,x=self.inverse_xscale(x)+74+(50-self.GetTextDimensions(f"LL{self.number}: {x}")[0]))
+        self.C.moveto(self.leftleaftext,x=self.inverse_xscale(x)+74+(50-self.get_text_dimensions(f"LL{self.number}: {x}")[0]))
         self.pixelx[0] = self.inverse_xscale(x)
 
         x = self.inverse_xscale(x)
@@ -112,7 +115,7 @@ class LeafPair():
                 x=150
             self.C.moveto(self.leftleaf,x=-960+leftleafpos)
             self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(leftleafpos)}", anchor="w")
-            self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
+            self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.get_text_dimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
             self.pixelx[0] = leftleafpos
 
 
@@ -171,7 +174,7 @@ class LeafPair():
 
             self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(x)}", anchor="w")
             self.C.moveto(self.leftleaf,x=-960+x)
-            self.C.moveto(self.leftleaftext,x=x+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
+            self.C.moveto(self.leftleaftext,x=x+74+(50-self.get_text_dimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
             self.pixelx[0] = x
 
             if self.left_selected and other == False:
@@ -191,7 +194,7 @@ class LeafPair():
                     x=150
                 self.C.moveto(self.leftleaf,x=-960+leftleafpos)
                 self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(leftleafpos)}", anchor="w")
-                self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.GetTextDimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
+                self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.get_text_dimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
                 self.pixelx[0] = leftleafpos
 
             self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {self.xscale(x-150)}", anchor="e")

@@ -29,6 +29,8 @@ class JawPair:
         self.C.tag_bind(self.bottomjawtext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.bottomjawtext, "<B1-Motion>", self.drag_motion)
 
+    def get_jaw_positions(self):
+        return [float(self.C.itemcget(self.topjawtext, "text").split(":")[1].strip()), float(self.C.itemcget(self.bottomjawtext, "text").split(":")[1].strip())]
 
     def hand_enter(self, event):
         self.C.config(cursor="hand2")

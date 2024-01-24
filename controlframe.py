@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from mlc_field import MLCField
 
 class CF(ctk.CTkFrame):
     def __init__(self, parent):
@@ -9,7 +10,9 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(0, weight=0)
         self.rowconfigure(1, weight=0, minsize=300)
         self.rowconfigure(2, weight=0)
-        self.rowconfigure(3, weight=1, minsize=300)
+        self.rowconfigure(3, weight=0)
+        self.rowconfigure(4, weight=1)
+        self.rowconfigure(5, weight=0, minsize=150)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -17,6 +20,9 @@ class CF(ctk.CTkFrame):
         self.titleframe.grid_propagate(False)
         self.title.pack(fill="both", pady=(10,10), expand=True, padx=(5,5), side="left")
         self.titleframe.grid(row=0, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+
+        self.sequence = []
+        self.selected_field = None
 
         #SQUARE FIELD
         self.sq_field = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -70,6 +76,10 @@ class CF(ctk.CTkFrame):
         self.drawrectbutton = ctk.CTkButton(self, text="Draw Rectangle", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.drawrect)
         self.drawrectbutton.grid(row=2, column=0, columnspan=2, pady=(5,5), sticky="nsew")
 
+        #SAVE/LOAD MLC FIELD
+        self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
+        self.savemlcbutton.grid(row=3, column=0, pady=(5,5), sticky="nsew")
+
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
         self.fieldseqframe.grid_propagate(False)
@@ -77,12 +87,50 @@ class CF(ctk.CTkFrame):
         self.fieldseqframe.rowconfigure(1, weight=1)
         self.fieldseqframe.columnconfigure(0, weight=1)
         self.fieldseqtitle = ctk.CTkLabel(self.fieldseqframe, text="Field Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B")
+        self.fieldseqscrollframe = ctk.CTkScrollableFrame(self.fieldseqframe, orientation="horizontal")
+        self.fieldseqscrollcanvas = ctk.CTkCanvas(self.fieldseqscrollframe, width=100, height=110, bg="#2B2B2B", borderwidth=0, highlightthickness=0)
+        self.fieldseqscrollcanvas.bind("<Double-Button-1>", self.load_mlc_field)
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
-        self.fieldseqframe.grid(row=3, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.fieldseqscrollcanvas.pack(fill="both", expand=True)
+        self.fieldseqframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+
+    def save_mlc_field(self):
+        leaf_positions = []
+        for leafpair in self.parent.C.leafpairs:
+            leaf_positions.append(leafpair.get_leaf_positions())
+        jaw_positions = self.parent.C.jawpair.get_jaw_positions() 
+        if self.selected_field == None:
+            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, len(self.sequence)))
+        else:
+            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.selected_field)
+
+        self.selected_field = None
+
+
+    def load_mlc_field(self, event=None, index=-1):
+
+        index = self.fieldseqscrollcanvas.find_closest(event.x, event.y)[0]
+        for i in range(len(self.sequence)):
+            if self.sequence[i].image_id == index:
+                index = i
+                break
+
+        for i, leafpair in enumerate(self.parent.C.leafpairs):
+
+            leafpair.set_left_leaf(self.sequence[index].leaf_positions[i][0])
+            leafpair.set_right_leaf(self.sequence[index].leaf_positions[i][1])
+        
+        self.parent.C.jawpair.set_top_jaw(self.sequence[index].jaw_positions[0])
+        self.parent.C.jawpair.set_bottom_jaw(self.sequence[index].jaw_positions[1])
+
+        self.selected_field = index
+        self.sequence[index].selected()
 
     def square(self, value=None):
         if value == None:
-            field_size = 10*float(self.squareentry.get())
+            try: field_size = 10*float(self.squareentry.get())
+            except ValueError: return
         else:
             field_size = 10*value
         if field_size > 400:
@@ -147,6 +195,15 @@ class CF(ctk.CTkFrame):
             if y1 > y2:
                 y1, y2 = y2, y1
 
+            if x1 < 150:
+                x1 = 150
+            if x2 > 150 + 960:
+                x2 = 150 + 960
+            if y1 < 0:
+                y1 = 20
+            if y2 > 1000:
+                y2 = 980
+
             x1, x2 = self.parent.C.leafpairs[0].xscale(x1-150), self.parent.C.leafpairs[0].xscale(x2-150)
             y1, y2 = self.parent.C.jawpair.yscale(y1), self.parent.C.jawpair.yscale(y2)
 
@@ -161,7 +218,7 @@ class CF(ctk.CTkFrame):
             self.parent.C.jawpair.set_top_jaw(y1)
             self.parent.C.jawpair.set_bottom_jaw(y2)
                         
-            self.parent.C.unbind("<Enter>")#
+            self.parent.C.unbind("<Enter>")
             self.parent.C.unbind("<Motion>")
             self.parent.C.unbind("<Button-1>")
             self.parent.C.unbind("<B1-Motion>")
@@ -177,7 +234,8 @@ class CF(ctk.CTkFrame):
         self.square(value=40)
 
     def offaxis(self):
-        x1, y1, x2, y2 = float(self.x1entry.get())*10, float(self.y1entry.get())*10, float(self.x2entry.get())*10, float(self.y2entry.get())*10
+        try: x1, y1, x2, y2 = float(self.x1entry.get())*10, float(self.y1entry.get())*10, float(self.x2entry.get())*10, float(self.y2entry.get())*10
+        except ValueError: return
         if x1 > x2:
             x1, x2 = x2, x1
         if y1 > y2:
