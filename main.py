@@ -3,6 +3,9 @@ import customtkinter as ctk
 from controlframe import CF
 from mlccanvas import MLCCanvas
 
+#TODO: Add a feature to delete fields from the sequence
+#TODO: Add a drag feature to the field sequence bitmaps to change the field order
+#TODO: Add a feature to export the field sequence
 
 class MLCWizard(ctk.CTk):
 
