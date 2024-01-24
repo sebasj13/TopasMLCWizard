@@ -68,15 +68,14 @@ class MLCField():
         return ImageTk.PhotoImage(img)
     
     def selected(self):
-        if self.select: 
+        if self.select == True: 
             self.unselected()
             self.select = False
             self.CF.selected_field = None
             return
         
-        self.select = True
-        try: self.CF.sequence[self.CF.selected_field].unselected()
-        except: pass
+        for field in self.CF.sequence:
+            field.unselected()
         self.C.delete(self.image_id)
         self.image = self.create_bitmap(size=80, border=True)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
