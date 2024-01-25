@@ -3,7 +3,7 @@ import customtkinter as ctk
 from controlframe import CF
 from mlccanvas import MLCCanvas
 
-#TODO: Add a feature to delete fields from the sequence
+#TODO: Add a feature to import the field sequence from a TOPAS Sequence file
 #TODO: Add a feature to export the field sequence
 
 class MLCWizard(ctk.CTk):
