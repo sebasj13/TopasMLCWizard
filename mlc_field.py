@@ -19,7 +19,7 @@ class MLCField():
         self.C = parent
         self.C.bind("<Enter>", lambda event: self.C.config(cursor="hand2"))
         self.C.bind("<Leave>", lambda event: self.C.config(cursor="arrow"))
-        self.C.config(width=(max([index, len(self.CF.sequence)])+2)*100+20)
+        self.C.config(width=(max([index, len(self.CF.sequence)])+1)*110)
         self.image_id = self.C.create_image(index*110,5, image=self.image, anchor="nw")
 
     def scale(self, value, size):
@@ -70,12 +70,11 @@ class MLCField():
     def selected(self):
         if self.select == True: 
             self.unselected()
-            self.select = False
-            self.CF.selected_field = None
             return
         
         for field in self.CF.sequence:
             field.unselected()
+            self.CF.selected_field = None
         self.select = True
         self.C.delete(self.image_id)
         self.image = self.create_bitmap(size=80, border=True)
@@ -83,5 +82,9 @@ class MLCField():
 
     def unselected(self):
         self.C.delete(self.image_id)
+        self.select = False
         self.image = self.create_bitmap(size=80, border=False)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
+
+    def delete(self):
+        self.C.delete(self.image_id)

@@ -79,6 +79,8 @@ class CF(ctk.CTkFrame):
         #SAVE/LOAD MLC FIELD
         self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
         self.savemlcbutton.grid(row=3, column=0, pady=(5,5), sticky="nsew")
+        self.showsequencebutton = ctk.CTkButton(self, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
+        self.showsequencebutton.grid(row=3, column=1, pady=(5,5), sticky="nsew")
 
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -90,6 +92,7 @@ class CF(ctk.CTkFrame):
         self.fieldseqscrollframe = ctk.CTkScrollableFrame(self.fieldseqframe, orientation="horizontal")
         self.fieldseqscrollcanvas = ctk.CTkCanvas(self.fieldseqscrollframe, width=100, height=110, bg="#2B2B2B", borderwidth=0, highlightthickness=0)
         self.fieldseqscrollcanvas.bind("<Double-Button-1>", self.load_mlc_field)
+        self.fieldseqscrollcanvas.bind("<Button-1>", self.drag_field)
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
@@ -103,19 +106,30 @@ class CF(ctk.CTkFrame):
         if self.selected_field == None:
             self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, len(self.sequence)))
         else:
+            self.sequence[self.selected_field].delete()
             self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.selected_field)
 
         self.selected_field = None
 
+    def show_mlc_sequence(self, iteration=0):
+        if iteration == len(self.sequence):
+            try: self.sequence[-1].unselected()
+            except Exception: pass
+            return
+        if iteration == 0:
+            if self.sequence[0].select == True: self.sequence[0].unselected()
+        self.load_mlc_field(index=self.sequence[iteration].index)
+        self.after(1000, lambda: self.show_mlc_sequence(iteration+1))
 
-    def load_mlc_field(self, event=None, index=-1):
+    def load_mlc_field(self, event=None, index=None):
 
-        index = self.fieldseqscrollcanvas.find_closest(event.x, event.y)[0]
-        for i in range(len(self.sequence)):
-            if self.sequence[i].image_id == index:
-                index = i
-                break
-
+        if index == None:
+            index = self.fieldseqscrollcanvas.find_closest(event.x, event.y)[0]
+            for i in range(len(self.sequence)):
+                if self.sequence[i].image_id == index:
+                    index = i
+                    break
+        self.sequence[index].selected()
         for i, leafpair in enumerate(self.parent.C.leafpairs):
 
             leafpair.set_left_leaf(self.sequence[index].leaf_positions[i][0])
@@ -125,7 +139,63 @@ class CF(ctk.CTkFrame):
         self.parent.C.jawpair.set_bottom_jaw(self.sequence[index].jaw_positions[1])
 
         self.selected_field = index
-        self.sequence[index].selected()
+
+
+    def drag_field(self, event):
+
+        index = self.fieldseqscrollcanvas.find_closest(event.x, event.y)[0]
+        for i in range(len(self.sequence)):
+            if self.sequence[i].image_id == index:
+                index = i
+                break
+
+        self.sequence[index].drag_start_x = event.x
+           
+        def drag_motion(event, mlc_field=self.sequence[index], old_index = index, sequence = self.sequence):
+            index = mlc_field.index
+            new_loc = event.x - mlc_field.drag_start_x + old_index*110
+
+
+            locations_left = [i*110 for i in range(len(self.sequence))]
+            locations_right = [i+100 for i in locations_left]
+
+            if index == 0:
+                left, right = 0, 60
+                leftindex, rightindex = 0, 1
+            elif index == len(self.sequence)-1:
+                left, right = locations_left[-1]-60, locations_right[-1]
+                leftindex, rightindex = len(self.sequence)-2, len(self.sequence)-1
+            else:
+                left = locations_right[index-1]-60
+                right = locations_left[index]+50
+                leftindex, rightindex = index-1, index+1
+
+            if new_loc < left:
+                mlc_field.C.moveto(sequence[leftindex].image_id, mlc_field.index*110, 5)
+                sequence[leftindex].index, sequence[index].index = sequence[index].index, sequence[leftindex].index
+                sequence[leftindex], sequence[index] = sequence[index], sequence[leftindex]
+
+            elif new_loc > right:
+                mlc_field.C.moveto(sequence[rightindex].image_id, mlc_field.index*110, 5)
+                sequence[rightindex].index, sequence[index].index = sequence[index].index, sequence[rightindex].index
+                sequence[rightindex], sequence[index] = sequence[index], sequence[rightindex]
+
+            mlc_field.C.moveto(mlc_field.image_id, new_loc, 5)
+
+
+        def drag_release(event, mlc_field =self.sequence[index], index=index):
+            new_loc = event.x - mlc_field.drag_start_x + index*110
+            locations = [i*110 for i in range(len(self.sequence))]
+            new_loc = min(locations, key=lambda x:abs(x-new_loc))
+            mlc_field.C.moveto(mlc_field.image_id, new_loc, 5)
+            self.fieldseqscrollcanvas.unbind("<B1-Motion>")
+            self.fieldseqscrollcanvas.unbind("<ButtonRelease-1>")
+            if self.selected_field != None:
+                self.selected_field = mlc_field.index
+
+
+        self.fieldseqscrollcanvas.bind("<B1-Motion>", drag_motion)
+        self.fieldseqscrollcanvas.bind("<ButtonRelease-1>", drag_release)
 
     def square(self, value=None):
         if value == None:
