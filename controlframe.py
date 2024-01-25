@@ -12,8 +12,8 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(2, weight=0)
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
-        self.rowconfigure(5, weight=0, minsize=150)
-        self.rowconfigure(6, weight=0)
+        self.rowconfigure(5, weight=0)
+        self.rowconfigure(6, weight=0, minsize=150)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -75,12 +75,27 @@ class CF(ctk.CTkFrame):
 
         #DRAW RECTANGLE
         self.drawrectbutton = ctk.CTkButton(self, text="Draw Rectangle", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.drawrect)
-        self.drawrectbutton.grid(row=2, column=0, columnspan=2, pady=(5,5), sticky="nsew")
+        self.drawrectbutton.grid(row=2, column=0, pady=(5,5), sticky="nsew")
 
         #SAVE/LOAD MLC FIELD
         self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
-        self.savemlcbutton.grid(row=3, column=0, columnspan=2, pady=(5,5), sticky="nsew")
+        self.savemlcbutton.grid(row=2, column=1, pady=(5,5), sticky="nsew")
 
+        #SHOW/LOAD/SAVE MLC SEQUENCE
+
+        self.saveframe = ctk.CTkFrame(self, fg_color="#2B2B2B", height=35)
+        self.saveframe.grid_propagate(False)
+        self.saveframe.rowconfigure(0)
+        self.saveframe.columnconfigure(0, weight=1)
+        self.saveframe.columnconfigure(1, weight=1)
+        self.saveframe.columnconfigure(2, weight=1)
+        self.showsequencebutton = ctk.CTkButton(self.saveframe, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
+        self.showsequencebutton.grid(row=0, column=0, pady=(5,5), sticky="nsew")
+        self.loadsequencebutton = ctk.CTkButton(self.saveframe, text="Load MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.load_mlc_sequence)
+        self.loadsequencebutton.grid(row=0, column=1, pady=(5,5), sticky="nsew")
+        self.savesequencebutton = ctk.CTkButton(self.saveframe, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
+        self.savesequencebutton.grid(row=0, column=2, pady=(5,5), sticky="nsew")
+        self.saveframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -96,13 +111,9 @@ class CF(ctk.CTkFrame):
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
-        self.fieldseqframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+        self.fieldseqframe.grid(row=6, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
 
-        self.showsequencebutton = ctk.CTkButton(self, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
-        self.showsequencebutton.grid(row=6, column=0, pady=(5,5), sticky="nsew")
 
-        self.savesequencebutton = ctk.CTkButton(self, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
-        self.savesequencebutton.grid(row=6, column=1, pady=(5,5), sticky="nsew")
 
     def save_mlc_field(self):
         leaf_positions = []
@@ -116,6 +127,9 @@ class CF(ctk.CTkFrame):
             self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.selected_field)
 
         self.selected_field = None
+
+    def load_mlc_sequence(self):
+        pass
 
     def show_mlc_sequence(self, iteration=0):
         if iteration == len(self.sequence):
