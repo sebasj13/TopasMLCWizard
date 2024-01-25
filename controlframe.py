@@ -1,5 +1,8 @@
 import customtkinter as ctk
 from mlc_field import MLCField
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+from rtplan_loadin import load_fields_from_rtplan
+from threading import Thread
 
 class CF(ctk.CTkFrame):
     def __init__(self, parent):
@@ -91,7 +94,7 @@ class CF(ctk.CTkFrame):
         self.saveframe.columnconfigure(2, weight=1)
         self.showsequencebutton = ctk.CTkButton(self.saveframe, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
         self.showsequencebutton.grid(row=0, column=0, pady=(5,5), sticky="nsew")
-        self.loadsequencebutton = ctk.CTkButton(self.saveframe, text="Load MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.load_mlc_sequence)
+        self.loadsequencebutton = ctk.CTkButton(self.saveframe, text="Load MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command= lambda: Thread(target=self.load_mlc_sequence).start())
         self.loadsequencebutton.grid(row=0, column=1, pady=(5,5), sticky="nsew")
         self.savesequencebutton = ctk.CTkButton(self.saveframe, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
         self.savesequencebutton.grid(row=0, column=2, pady=(5,5), sticky="nsew")
@@ -128,9 +131,17 @@ class CF(ctk.CTkFrame):
         self.selected_field = None
 
     def load_mlc_sequence(self):
-        pass
+        file = askopenfilename(filetypes=[("RTPLAN", "*.dcm"), ("TOPAS Sequence", "*.txt")])
+        if file == "": return
+
+        if file.endswith(".txt"):
+            pass
+        elif file.endswith(".dcm"):
+            load_fields_from_rtplan(file, self.fieldseqscrollcanvas, self)
 
     def show_mlc_sequence(self, iteration=0):
+        time = 200
+        if len(self.sequence) > 10: time = 25
         if iteration == len(self.sequence):
             try: self.sequence[-1].unselected()
             except Exception: pass
@@ -139,13 +150,14 @@ class CF(ctk.CTkFrame):
             return
         if iteration == 0:
             if self.sequence[0].select == True: self.sequence[0].unselected()
-        self.load_mlc_field(index=self.sequence[iteration].index)
-        self.after(300, lambda: self.show_mlc_sequence(iteration+1))
+        self.fieldseqscrollframe._parent_canvas.xview("moveto", max([0,iteration-2])/len(self.sequence))
+        self.load_mlc_field(index=self.sequence[iteration].index, show=True)
+        self.after(time, lambda: self.show_mlc_sequence(iteration+1))
 
     def save_mlc_sequence(self):
         pass
 
-    def load_mlc_field(self, event=None, index=None):
+    def load_mlc_field(self, event=None, index=None, show=False):
 
         if index == None:
             index = self.fieldseqscrollcanvas.find_closest(event.x, event.y)[0]
@@ -153,11 +165,11 @@ class CF(ctk.CTkFrame):
                 if self.sequence[i].image_id == index:
                     index = i
                     break
-        self.sequence[index].selected()
+        if not show: self.sequence[index].selected()
         for i, leafpair in enumerate(self.parent.C.leafpairs):
 
-            leafpair.set_left_leaf(self.sequence[index].leaf_positions[i][0])
-            leafpair.set_right_leaf(self.sequence[index].leaf_positions[i][1])
+            leafpair.set_left_leaf(self.sequence[index].leaf_positions[i][0], checks=False)
+            leafpair.set_right_leaf(self.sequence[index].leaf_positions[i][1], checks=False)
         
         self.parent.C.jawpair.set_top_jaw(self.sequence[index].jaw_positions[0])
         self.parent.C.jawpair.set_bottom_jaw(self.sequence[index].jaw_positions[1])

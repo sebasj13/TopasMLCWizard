@@ -87,41 +87,41 @@ class LeafPair():
     def inverse_xscale(self, value):
         return int(interp1d([-200,200],[0,960])(value))
     
-    def set_left_leaf(self, x):
+    def set_left_leaf(self, x, checks=True):
         self.C.moveto(self.leftleaf,x=-960+self.inverse_xscale(x))
         self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {x}", anchor="w")
         self.C.moveto(self.leftleaftext,x=self.inverse_xscale(x)+74+(50-self.get_text_dimensions(f"LL{self.number}: {x}")[0]))
         self.pixelx[0] = self.inverse_xscale(x)
 
-        x = self.inverse_xscale(x)
-        if x+150 > self.pixelx[1]:
-            rightleafpos = x + 150
-            if rightleafpos > self.C.winfo_width()-self.w:
-                rightleafpos = self.C.winfo_width()-self.w
-                x = self.C.winfo_width()-2*self.w
-            self.C.moveto(self.rightleaf,x=rightleafpos)
-            self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {self.xscale(rightleafpos-150)}", anchor="e")
-            self.C.moveto(self.rightleaftext,x=rightleafpos+16)
-            self.pixelx[1] = rightleafpos
+        if checks:
+            x = self.inverse_xscale(x)
+            if x+150 > self.pixelx[1]:
+                rightleafpos = x + 150
+                if rightleafpos > self.C.winfo_width()-self.w:
+                    rightleafpos = self.C.winfo_width()-self.w
+                    x = self.C.winfo_width()-2*self.w
+                self.C.moveto(self.rightleaf,x=rightleafpos)
+                self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {self.xscale(rightleafpos-150)}", anchor="e")
+                self.C.moveto(self.rightleaftext,x=rightleafpos+16)
+                self.pixelx[1] = rightleafpos
 
-
-    def set_right_leaf(self, x):
+    def set_right_leaf(self, x, checks=True):
         self.C.moveto(self.rightleaf,x=self.inverse_xscale(x)+150)
         self.C.itemconfigure(self.rightleaftext, text=f"RL{self.number}: {x}", anchor="e")
         self.C.moveto(self.rightleaftext,x=self.inverse_xscale(x)+150+16)
         self.pixelx[1] = self.inverse_xscale(x)+self.w
 
-        x = self.inverse_xscale(x)+150
-        if x <= self.pixelx[0]+150:
-            leftleafpos = x-150
-            if leftleafpos < 0:
-                leftleafpos = 0
-                x=150
-            self.C.moveto(self.leftleaf,x=-960+leftleafpos)
-            self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(leftleafpos)}", anchor="w")
-            self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.get_text_dimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
-            self.pixelx[0] = leftleafpos
-
+        if checks:
+            x = self.inverse_xscale(x)+150
+            if x <= self.pixelx[0]+150:
+                leftleafpos = x-150
+                if leftleafpos < 0:
+                    leftleafpos = 0
+                    x=150
+                self.C.moveto(self.leftleaf,x=-960+leftleafpos)
+                self.C.itemconfigure(self.leftleaftext, text=f"LL{self.number}: {self.xscale(leftleafpos)}", anchor="w")
+                self.C.moveto(self.leftleaftext,x=leftleafpos+74+(50-self.get_text_dimensions(f"LL{self.number}: {self.xscale(x)}")[0]))
+                self.pixelx[0] = leftleafpos
 
     def drag_start(self, event):
         self._drag_start_x = event.x
