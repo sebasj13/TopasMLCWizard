@@ -24,10 +24,11 @@ setuptools.setup(
         "numpy",
         "scipy",
         "Pillow",
+        "pydicom"
     ],
     packages=[
         "topasmlcwizard",
-        "topasmlcwizard.src",
+        "topasmlcwizardsrc",
     ],
     scripts=["topasmlcwizard/topasmlcwizard.py"],
     entry_points={
