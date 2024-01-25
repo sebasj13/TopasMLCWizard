@@ -1,4 +1,3 @@
-import customtkinter as ctk
 from PIL import Image, ImageTk, ImageOps
 import numpy as np
 from scipy.interpolate import interp1d
@@ -15,7 +14,7 @@ class MLCField():
         self.CF = CF
 
         self.image = self.create_bitmap(size=80)
-        self.closeimage = ImageTk.PhotoImage(Image.open("close.png").resize((20,20), Image.Resampling.LANCZOS))
+        self.closeimage = ImageTk.PhotoImage(Image.open("img/close.png").resize((20,20), Image.Resampling.LANCZOS))
         
         self.C = parent
         self.C.bind("<Enter>", lambda event: self.C.config(cursor="hand2"))
