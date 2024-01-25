@@ -76,6 +76,7 @@ class MLCField():
         
         for field in self.CF.sequence:
             field.unselected()
+        self.select = True
         self.C.delete(self.image_id)
         self.image = self.create_bitmap(size=80, border=True)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
