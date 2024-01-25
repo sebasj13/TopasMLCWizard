@@ -16,7 +16,7 @@ class MLCField():
         self.CF = CF
 
         self.image = self.create_bitmap(size=80)
-        self.closeimage = ImageTk.PhotoImage(Image.open(self.resource_path(os.path.join("topasmlcwizard","img","close.png"))).resize((20,20), Image.Resampling.LANCZOS))
+        self.closeimage = ImageTk.PhotoImage(Image.open(self.resource_path(os.path.join("img","close.png"))).resize((20,20), Image.Resampling.LANCZOS))
         
         self.C = parent
         self.C.bind("<Enter>", lambda event: self.C.config(cursor="hand2"))
@@ -35,7 +35,7 @@ class MLCField():
     def resource_path(self, relative_path):
             """ Get absolute path to resource, works for dev and for PyInstaller """
             if hasattr(sys, '_MEIPASS'):
-                return os.path.join(sys._MEIPASS, "TopasMLCWizard", relative_path)
+                return os.path.join(sys._MEIPASS, "TopasMLCWizard", "topasmlcwizard", relative_path)
             
             return os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, relative_path)
 
