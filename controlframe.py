@@ -13,6 +13,7 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=0, minsize=150)
+        self.rowconfigure(6, weight=0)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -78,9 +79,8 @@ class CF(ctk.CTkFrame):
 
         #SAVE/LOAD MLC FIELD
         self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
-        self.savemlcbutton.grid(row=3, column=0, pady=(5,5), sticky="nsew")
-        self.showsequencebutton = ctk.CTkButton(self, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
-        self.showsequencebutton.grid(row=3, column=1, pady=(5,5), sticky="nsew")
+        self.savemlcbutton.grid(row=3, column=0, columnspan=2, pady=(5,5), sticky="nsew")
+
 
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -97,6 +97,12 @@ class CF(ctk.CTkFrame):
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
         self.fieldseqframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+
+        self.showsequencebutton = ctk.CTkButton(self, text="Show MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.show_mlc_sequence)
+        self.showsequencebutton.grid(row=6, column=0, pady=(5,5), sticky="nsew")
+
+        self.savesequencebutton = ctk.CTkButton(self, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
+        self.savesequencebutton.grid(row=6, column=1, pady=(5,5), sticky="nsew")
 
     def save_mlc_field(self):
         leaf_positions = []
@@ -115,11 +121,16 @@ class CF(ctk.CTkFrame):
         if iteration == len(self.sequence):
             try: self.sequence[-1].unselected()
             except Exception: pass
+            [field.unselected() for field in self.sequence]
+            self.selected_field = None
             return
         if iteration == 0:
             if self.sequence[0].select == True: self.sequence[0].unselected()
         self.load_mlc_field(index=self.sequence[iteration].index)
-        self.after(1000, lambda: self.show_mlc_sequence(iteration+1))
+        self.after(300, lambda: self.show_mlc_sequence(iteration+1))
+
+    def save_mlc_sequence(self):
+        pass
 
     def load_mlc_field(self, event=None, index=None):
 
