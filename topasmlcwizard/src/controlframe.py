@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from src.mlc_field import MLCField
+from .mlc_field import MLCField
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from src.rtplan_loadin import load_fields_from_rtplan
+from .rtplan_loadin import load_fields_from_rtplan
 from threading import Thread
 
 class CF(ctk.CTkFrame):

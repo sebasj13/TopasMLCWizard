@@ -1,6 +1,8 @@
 from PIL import Image, ImageTk, ImageOps
 import numpy as np
 from scipy.interpolate import interp1d
+import os
+import sys
 
 class MLCField():
 
@@ -14,7 +16,7 @@ class MLCField():
         self.CF = CF
 
         self.image = self.create_bitmap(size=80)
-        self.closeimage = ImageTk.PhotoImage(Image.open("img/close.png").resize((20,20), Image.Resampling.LANCZOS))
+        self.closeimage = ImageTk.PhotoImage(Image.open(self.resource_path(os.path.join("topasmlcwizard","img","close.png"))).resize((20,20), Image.Resampling.LANCZOS))
         
         self.C = parent
         self.C.bind("<Enter>", lambda event: self.C.config(cursor="hand2"))
@@ -29,6 +31,13 @@ class MLCField():
         self.C.tag_bind(self.close_image_id, "<Enter>", lambda event: self.C.config(cursor="hand2"))
         self.C.tag_bind(self.close_image_id, "<Leave>", lambda event: self.C.config(cursor="arrow"))
         self.C.tag_bind(self.close_image_id, "<Button-1>", lambda event: self.remove())
+
+    def resource_path(self, relative_path):
+            """ Get absolute path to resource, works for dev and for PyInstaller """
+            if hasattr(sys, '_MEIPASS'):
+                return os.path.join(sys._MEIPASS, "TopasGraphSim", relative_path)
+            else:
+                return os.path.join(os.path.abspath("."), relative_path)
 
 
     def scale(self, value, size):

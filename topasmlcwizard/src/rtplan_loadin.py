@@ -1,5 +1,5 @@
 import pydicom as pd
-from src.mlc_field import MLCField
+from .mlc_field import MLCField
 
 def load_fields_from_rtplan(rtplan_path, C, CF):
     with pd.dcmread(rtplan_path) as ds:

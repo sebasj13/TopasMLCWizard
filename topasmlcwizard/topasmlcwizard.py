@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
-from src.controlframe import CF
-from src.mlccanvas import MLCCanvas
+from .src.controlframe import CF
+from .src.mlccanvas import MLCCanvas
 
 #TODO: Add a feature to import the field sequence from a TOPAS Sequence file
 #TODO: Add a feature to export the field sequence
