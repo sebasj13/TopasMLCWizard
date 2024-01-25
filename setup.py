@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     scripts=["topasmlcwizard/topasmlcwizard.py"],
     entry_points={
-        "console_scripts": ["topasmlcwizard=topasmlcwizard.topasmlcwizard:TopasMLCWizard"],
+        "console_scripts": ["topasmlcwizard=topasmlcwizard.topasmlcwizard:MLCWizard"],
     },
     keywords=["topas", "monte-carlo", "python", "MLC", "GUI"],
     python_requires=">=3.10",

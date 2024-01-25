@@ -35,9 +35,9 @@ class MLCField():
     def resource_path(self, relative_path):
             """ Get absolute path to resource, works for dev and for PyInstaller """
             if hasattr(sys, '_MEIPASS'):
-                return os.path.join(sys._MEIPASS, "TopasGraphSim", relative_path)
-            else:
-                return os.path.join(os.path.abspath("."), relative_path)
+                return os.path.join(sys._MEIPASS, "TopasMLCWizard", relative_path)
+            
+            return os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, relative_path)
 
 
     def scale(self, value, size):
