@@ -107,7 +107,6 @@ class CF(ctk.CTkFrame):
         self.fieldseqscrollframe = ctk.CTkScrollableFrame(self.fieldseqframe, orientation="horizontal")
         self.fieldseqscrollcanvas = ctk.CTkCanvas(self.fieldseqscrollframe, width=100, height=110, bg="#2B2B2B", borderwidth=0, highlightthickness=0)
         self.fieldseqscrollcanvas.bind("<Double-Button-1>", self.load_mlc_field)
-        self.fieldseqscrollcanvas.bind("<Button-1>", self.drag_field)
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
@@ -197,15 +196,18 @@ class CF(ctk.CTkFrame):
 
             if new_loc < left:
                 mlc_field.C.moveto(sequence[leftindex].image_id, mlc_field.index*110, 5)
+                mlc_field.C.moveto(sequence[leftindex].close_image_id, mlc_field.index*110+40, 105)
                 sequence[leftindex].index, sequence[index].index = sequence[index].index, sequence[leftindex].index
                 sequence[leftindex], sequence[index] = sequence[index], sequence[leftindex]
 
             elif new_loc > right:
                 mlc_field.C.moveto(sequence[rightindex].image_id, mlc_field.index*110, 5)
+                mlc_field.C.moveto(sequence[rightindex].close_image_id, mlc_field.index*110+40, 105)
                 sequence[rightindex].index, sequence[index].index = sequence[index].index, sequence[rightindex].index
                 sequence[rightindex], sequence[index] = sequence[index], sequence[rightindex]
 
             mlc_field.C.moveto(mlc_field.image_id, new_loc, 5)
+            mlc_field.C.moveto(mlc_field.close_image_id, new_loc+40, 105)
 
 
         def drag_release(event, mlc_field =self.sequence[index], index=index):
@@ -213,6 +215,7 @@ class CF(ctk.CTkFrame):
             locations = [i*110 for i in range(len(self.sequence))]
             new_loc = min(locations, key=lambda x:abs(x-new_loc))
             mlc_field.C.moveto(mlc_field.image_id, new_loc, 5)
+            mlc_field.C.moveto(mlc_field.close_image_id, new_loc+40, 105)
             self.fieldseqscrollcanvas.unbind("<B1-Motion>")
             self.fieldseqscrollcanvas.unbind("<ButtonRelease-1>")
             if self.selected_field != None:
@@ -319,7 +322,6 @@ class CF(ctk.CTkFrame):
             self.parent.C.unbind("<B1-Motion>")
             self.parent.C.unbind("<ButtonRelease-1>")
             self.parent.C.delete(self.tooltip)
-            self.parent.C.config(cursor="arrow")
 
         self.parent.C.bind("<Enter>", on_enter)
         self.parent.C.bind("<Button-1>", drawrect_start)

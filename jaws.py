@@ -39,9 +39,13 @@ class JawPair:
         self.C.config(cursor="arrow")
 
     def yscale(self, value):
+        if value > 980: value = 980
+        if value < 20: value = 20
         return round(float(interp1d([980,20],[-200,200])(value)),1)
     
     def inverse_yscale(self, value):
+        if value > 200: value = 200
+        if value < -200: value = -200
         return int(interp1d([-200,200],[980,20])(value))
     
     def set_top_jaw(self, value):

@@ -78,6 +78,10 @@ class LeafPair():
         return (size.cx, size.cy)
 
     def xscale(self, value):
+        if value < 0:
+            value = 0
+        if value > 960:
+            value = 960
         return round(float(interp1d([0,960],[-200,200])(value)),1)
     
     def inverse_xscale(self, value):
@@ -128,8 +132,8 @@ class LeafPair():
         self.C.tag_bind(self.leftleaf, "<ButtonRelease-1>", self.drag_end)
         self.C.tag_bind(self.rightleaf, "<ButtonRelease-1>", self.drag_end)
         if "leftleaf" in self.name and "rightleaf" in self.name:
-            x1 = self.pixelx[0] + event.x - self._drag_start_x
-            x2 = self.pixelx[1] + event.x - self._drag_start_x
+            x1 = min([960,max([0,self.pixelx[0] + event.x - self._drag_start_x])])
+            x2 = min([self.pixelx[1] + event.x - self._drag_start_x,1110])
 
         elif "leftleaf" in self.name:
             self.C.tag_unbind(self.leftleaf, "<Leave>")
@@ -151,13 +155,14 @@ class LeafPair():
 
             for i in range(len(self.C.leafpairs)):
                 if self.C.leafpairs[i].number != self.number:
-                    if self.C.leafpairs[i].right_selected:
-                        self.C.leafpairs[i].name.append("rightleaf")
-                    if self.C.leafpairs[i].left_selected:
-                        self.C.leafpairs[i].name.append("leftleaf")
                     self.C.leafpairs[i].name = list(set(self.C.leafpairs[i].name))
                     self.C.leafpairs[i]._drag_start_x = self._drag_start_x
-                    self.C.leafpairs[i].drag_motion(event, other=True)
+                    if self.C.leafpairs[i].right_selected:
+                        self.C.leafpairs[i].name.append("rightleaf")
+                        self.C.leafpairs[i].set_right_leaf(self.C.leafpairs[i].xscale(x2-150))
+                    if self.C.leafpairs[i].left_selected:
+                        self.C.leafpairs[i].name.append("leftleaf")
+                        self.C.leafpairs[i].set_left_leaf(self.C.leafpairs[i].xscale(x1))
 
         elif "leftleaf" in self.name:
             
