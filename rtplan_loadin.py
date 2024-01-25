@@ -8,7 +8,7 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
         number_of_beams = len(ds.BeamSequence)
         for i in range(number_of_beams):
             mlc_positions = {}
-            control_points = len(ds.BeamSequence[i].ControlPointSequence)-1
+            control_points = len(ds.BeamSequence[i].ControlPointSequence)
 
             for j in range(control_points):
                 for mlc_index in range(len(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence)):

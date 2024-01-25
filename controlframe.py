@@ -3,6 +3,7 @@ from mlc_field import MLCField
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from rtplan_loadin import load_fields_from_rtplan
 from threading import Thread
+import gc
 
 class CF(ctk.CTkFrame):
     def __init__(self, parent):
@@ -141,7 +142,7 @@ class CF(ctk.CTkFrame):
 
     def show_mlc_sequence(self, iteration=0):
         time = 200
-        if len(self.sequence) > 10: time = 25
+        if len(self.sequence) > 10: time = 50
         if iteration == len(self.sequence):
             try: self.sequence[-1].unselected()
             except Exception: pass
