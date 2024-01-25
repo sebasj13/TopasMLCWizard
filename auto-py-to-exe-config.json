@@ -7,7 +7,7 @@
   },
   {
    "optionDest": "filenames",
-   "value": "C:/Users/sebas/Documents/GitHub/TopasMLCWizard/topasmlcwizard/__main__.py"
+   "value": "C:/Users/sebas/Documents/GitHub/TopasMLCWizard/topasmlcwizard/topasmlcwizard.py"
   },
   {
    "optionDest": "onefile",
@@ -55,11 +55,15 @@
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sebas/Documents/GitHub/TopasMLCWizard;TopasMLCWizard/"
+   "value": "C:/Users/sebas/miniconda3/Lib/site-packages/customtkinter;customtkinter/"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sebas/miniconda3/envs/pylinac/Lib/site-packages/customtkinter;customtkinter/"
+   "value": "C:/Users/sebas/miniconda3/Lib/site-packages/pydicom;pydicom/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sebas/Documents/GitHub/TopasMLCWizard;TopasMLCWizard/"
   }
  ],
  "nonPyinstallerOptions": {
