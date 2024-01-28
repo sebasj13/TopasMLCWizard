@@ -2,6 +2,7 @@ import customtkinter as ctk
 from .mlc_field import MLCField
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from .rtplan_loadin import load_fields_from_rtplan
+from .topas_loadin import load_fields_from_topas
 from threading import Thread
 
 class CF(ctk.CTkFrame):
@@ -135,7 +136,7 @@ class CF(ctk.CTkFrame):
         if file == "": return
 
         if file.endswith(".txt"):
-            pass
+            load_fields_from_topas(file, self.fieldseqscrollcanvas, self)
         elif file.endswith(".dcm"):
             load_fields_from_rtplan(file, self.fieldseqscrollcanvas, self)
 
