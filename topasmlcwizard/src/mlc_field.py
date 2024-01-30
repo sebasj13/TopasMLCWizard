@@ -6,7 +6,7 @@ import sys
 
 class MLCField():
 
-    def __init__(self, parent, CF, leaf_positions, jaw_positions, index):
+    def __init__(self, parent, CF, leaf_positions, jaw_positions, gantry_angle, collimator_angle, couch_angle, index):
         self.parent = parent
         self.index = index
         self.select = False
@@ -14,6 +14,9 @@ class MLCField():
         self.leaf_positions = leaf_positions
         self.jaw_positions = jaw_positions
         self.CF = CF
+        self.gantry_angle = gantry_angle
+        self.collimator_angle = collimator_angle
+        self.couch_angle = couch_angle
 
         self.image = self.create_bitmap(size=80)
         self.closeimage = ImageTk.PhotoImage(Image.open(self.resource_path(os.path.join("img","close.png"))).resize((20,20), Image.Resampling.LANCZOS))
@@ -97,6 +100,9 @@ class MLCField():
         self.C.delete(self.image_id)
         self.C.delete(self.close_image_id)
         self.image = self.create_bitmap(size=80, border=True)
+        self.CF.gantrydial.set(self.gantry_angle)
+        self.CF.collimatordial.set(self.collimator_angle)
+        self.CF.couchdial.set(self.couch_angle)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
         self.close_image_id = self.C.create_image(self.index*110+40,105, image=self.closeimage, anchor="nw")
         self.C.tag_bind(self.image_id, "<Enter>", lambda event: self.C.config(cursor="hand2"))
@@ -110,6 +116,9 @@ class MLCField():
         self.C.delete(self.image_id)
         self.C.delete(self.close_image_id)
         self.select = False
+        self.CF.gantrydial.set(0)
+        self.CF.collimatordial.set(0)
+        self.CF.couchdial.set(0)
         self.image = self.create_bitmap(size=80, border=False)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
         self.close_image_id = self.C.create_image(self.index*110+40,105, image=self.closeimage, anchor="nw")
@@ -128,9 +137,14 @@ class MLCField():
 
         self.C.delete(self.image_id)
         self.C.delete(self.close_image_id)
+        if len(self.CF.sequence) == 1:
+            self.CF.selected_field = None
         self.CF.sequence.pop(self.index)
         for i, field in enumerate(self.CF.sequence):
             field.index = i
             self.C.moveto(field.image_id, x=i*110, y=5)
             self.C.moveto(field.close_image_id, x=i*110+40, y=105)
         self.C.config(width=(max([self.index, len(self.CF.sequence)])+1)*110)
+        self.CF.gantrydial.set(0)
+        self.CF.collimatordial.set(0)
+        self.CF.couchdial.set(0)

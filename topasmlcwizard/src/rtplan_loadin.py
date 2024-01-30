@@ -4,12 +4,21 @@ from .mlc_field import MLCField
 def load_fields_from_rtplan(rtplan_path, C, CF):
     with pd.dcmread(rtplan_path) as ds:
         control_point_fields = []
+        gantry_angles = []
+        collimator_angles = []
+        couch_angles = []
         number_of_beams = len(ds.BeamSequence)
         for i in range(number_of_beams):
             mlc_positions = {}
             control_points = len(ds.BeamSequence[i].ControlPointSequence)
 
             for j in range(control_points):
+                try: gantry_angles += [ds.BeamSequence[i].ControlPointSequence[j].GantryAngle]
+                except Exception: gantry_angles += [gantry_angles[-1]]
+                try: collimator_angles += [ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDeviceAngle]
+                except Exception: collimator_angles +=  [collimator_angles[-1]]
+                try: couch_angles += [ds.BeamSequence[i].ControlPointSequence[j].PatientSupportAngle]
+                except Exception: couch_angles += [couch_angles[-1]]
                 for mlc_index in range(len(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence)):
                     if ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].RTBeamLimitingDeviceType in ["MLCX","MLCY"] :
                         break
@@ -31,6 +40,6 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
                 control_point_fields += [[mlc_positions, jaw_positions]]
 
         for i in range(len(control_point_fields)):
-            CF.sequence.append(MLCField(C, CF, control_point_fields[i][0], control_point_fields[i][1], i))
+            CF.sequence.append(MLCField(C, CF, control_point_fields[i][0], control_point_fields[i][1], gantry_angles[i], collimator_angles[i], couch_angles[i], i))
 
         return

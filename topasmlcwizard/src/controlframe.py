@@ -4,6 +4,7 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from .rtplan_loadin import load_fields_from_rtplan
 from .topas_loadin import load_fields_from_topas
 from threading import Thread
+import tkdial as tkd
 
 class CF(ctk.CTkFrame):
     def __init__(self, parent):
@@ -17,7 +18,9 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=0)
-        self.rowconfigure(6, weight=0, minsize=150)
+        self.rowconfigure(6, weight=1)
+        self.rowconfigure(7, weight=0)
+        self.rowconfigure(8, weight=0, minsize=150)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -99,7 +102,7 @@ class CF(ctk.CTkFrame):
         self.loadsequencebutton.grid(row=0, column=1, pady=(5,5), sticky="nsew")
         self.savesequencebutton = ctk.CTkButton(self.saveframe, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
         self.savesequencebutton.grid(row=0, column=2, pady=(5,5), sticky="nsew")
-        self.saveframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.saveframe.grid(row=7, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -114,7 +117,26 @@ class CF(ctk.CTkFrame):
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
-        self.fieldseqframe.grid(row=6, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+        self.fieldseqframe.grid(row=8, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+
+
+        self.dialframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
+        self.dialframe.grid_propagate(False)    
+        self.dialframe.rowconfigure(0, weight=1)
+        self.dialframe.columnconfigure(0, weight=1)
+        self.dialframe.columnconfigure(1, weight=1)
+        self.dialframe.columnconfigure(2, weight=1)
+
+        self.gantrydial = tkd.Jogwheel(self.dialframe, text="Gantry: ", start=360, end=00, start_angle=90, divisions=10, scroll_steps=1, end_angle=360,button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.gantrydial.grid(row=0, column=0, pady=(10,5), sticky="nsew", padx=(25,5))
+        self.gantrydial.set(0)
+        self.collimatordial = tkd.Jogwheel(self.dialframe, text="Collimator: ", start=360, end=0, divisions=10, start_angle=90, end_angle=360,scroll_steps=1, button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.collimatordial.grid(row=0, column=1, pady=(10,5), sticky="nsew", padx=(5,5))    
+        self.collimatordial.set(0)
+        self.couchdial = tkd.Jogwheel(self.dialframe,text="Couch: ", start=360, end=0, divisions=10, start_angle=90, end_angle=360, scroll_steps=1, button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.couchdial.grid(row=0, column=2, pady=(10,5), sticky="nsew", padx=(5,5))
+        self.couchdial.set(0)
+        self.dialframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
 
 
@@ -124,10 +146,10 @@ class CF(ctk.CTkFrame):
             leaf_positions.append(leafpair.get_leaf_positions())
         jaw_positions = self.parent.C.jawpair.get_jaw_positions() 
         if self.selected_field == None:
-            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, len(self.sequence)))
+            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), len(self.sequence)))
         else:
             self.sequence[self.selected_field].delete()
-            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.selected_field)
+            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.selected_field)
 
         self.selected_field = None
 
@@ -172,6 +194,9 @@ class CF(ctk.CTkFrame):
             leafpair.set_left_leaf(self.sequence[index].leaf_positions[i][0], checks=False)
             leafpair.set_right_leaf(self.sequence[index].leaf_positions[i][1], checks=False)
         
+        self.gantrydial.set(self.sequence[index].gantry_angle)
+        self.collimatordial.set(self.sequence[index].collimator_angle)
+        self.couchdial.set(self.sequence[index].couch_angle)
         self.parent.C.jawpair.set_top_jaw(self.sequence[index].jaw_positions[0])
         self.parent.C.jawpair.set_bottom_jaw(self.sequence[index].jaw_positions[1])
 
@@ -286,6 +311,7 @@ class CF(ctk.CTkFrame):
 
         def on_enter(event):
             self.tooltip = self.parent.C.create_text(900,745, text="", fill="yellow", anchor="center", font=("Arial", 9))
+            self.parent.C.unbind("<Enter>")
 
         def mouse_motion(event):
             if self.parent.C.cget("cursor") != "crosshair":
