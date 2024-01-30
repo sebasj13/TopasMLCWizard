@@ -11,11 +11,11 @@ def load_fields_from_topas(topas_path, C, CF):
 
     def inverse_xscale_left(x):
         idx = (np.abs(np.array(y_array_left) - x)).argmin()
-        return round(x_array[idx],3)
+        return -1*round(x_array[idx],3)
     
     def inverse_xscale_right(x):
         idx = (np.abs(np.array(y_array_right) - x)).argmin()
-        return round(x_array[idx],3)
+        return -1*round(x_array[idx],3)
 
     def inverse_yscale_top(y):
         idx = (np.abs(np.array(y_array_top) - y)).argmin()
@@ -59,10 +59,8 @@ def load_fields_from_topas(topas_path, C, CF):
 
     for i in range(len(top_jaw_positions)):
 
-        control_point_fields += [[list(zip(list(map(inverse_xscale_left,mlc_left_positions[i])), list(map(inverse_xscale_right,mlc_right_positions[i])))), [inverse_yscale_bottom(bottom_jaw_positions[i]), -1*inverse_yscale_top(top_jaw_positions[i])]]]
-
-    for i in range(len(control_point_fields)):
-        CF.sequence.append(MLCField(C, CF, control_point_fields[i][0], control_point_fields[i][1], 0,0,0, i))
+        control_point_fields += [[list(zip( list(map(inverse_xscale_right,mlc_right_positions[i])), list(map(inverse_xscale_left,mlc_left_positions[i])))), [inverse_yscale_top(top_jaw_positions[i]), -1*inverse_yscale_bottom(bottom_jaw_positions[i])]]]
+        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], 0,0,0, i))
 
     return
 
