@@ -19,7 +19,7 @@ materials = '\
 #################################################################\n\
 #                            MATERIALS                          #\n\
 #################################################################\n\n\
-includeFile                          = Components/IEC_F.txt\n\n\
+includeFile                          = {}Components/IEC_F.txt\n\n\
 sv:Ma/LeafMaterial/Components        = 3 "Tungsten" "Nickel" "Iron"\n\
 uv:Ma/LeafMaterial/Fractions 	     = 3 0.95 00.0375 0.0125\n\
 d:Ma/LeafMaterial/Density            = 18 g/cm3\n\n'
@@ -53,7 +53,7 @@ d:Ge/LeftLeaf{}/TransY               = {} mm\n\
 d:Ge/LeftLeaf{}/TransZ               = {} mm\n\
 d:Ge/LeftLeaf{}/RotX                 = {} deg\n\
 s:Ge/LeftLeaf{}/DrawingStyle         = "Solid"\n\
-s:Ge/LeftLeaf{}/InputFile            = "CAD/MLC_Leaf"\n\
+s:Ge/LeftLeaf{}/InputFile            = "{}CAD/MLC_Leaf"\n\
 s:Ge/LeftLeaf{}/FileFormat           = "stl" \n\
 d:Ge/LeftLeaf{}/Units                = 1 mm\n\
 s:Ge/LeftLeaf{}/Color                = {}\n\
@@ -72,7 +72,7 @@ d:Ge/RightLeaf{}/TransY              = {} mm\n\
 d:Ge/RightLeaf{}/TransZ              = {} mm\n\
 d:Ge/RightLeaf{}/RotX                = {} deg\n\
 s:Ge/RightLeaf{}/DrawingStyle        = "Solid"\n\
-s:Ge/RightLeaf{}/InputFile           = "CAD/MLC_Leaf"\n\
+s:Ge/RightLeaf{}/InputFile           = "{}CAD/MLC_Leaf"\n\
 s:Ge/RightLeaf{}/FileFormat          = "stl"\n\
 d:Ge/RightLeaf{}/Units               = 1 mm\n\
 s:Ge/RightLeaf{}/Color               = {}\n\
@@ -93,7 +93,7 @@ d:Ge/BottomJaw/TransY                   = Tf/BottomJawPos/Value mm\n\
 d:Ge/BottomJaw/TransZ                   = -432 mm + Ge/IEC_F/SSD \n\
 d:Ge/BottomJaw/RotZ                     = 270 deg\n\
 s:Ge/BottomJaw/DrawingStyle             = "Solid"\n\
-s:Ge/BottomJaw/InputFile                = "CAD/Jaw"\n\
+s:Ge/BottomJaw/InputFile                = "{}CAD/Jaw"\n\
 s:Ge/BottomJaw/FileFormat               = "stl" \n\
 d:Ge/BottomJaw/Units                    = 1 mm\n\
 s:Ge/BottomJaw/Color                    = "Grey160"\n\
@@ -109,7 +109,7 @@ d:Ge/TopJaw/TransY                      = Tf/TopJawPos/Value mm\n\
 d:Ge/TopJaw/TransZ                      = -432 mm + Ge/IEC_F/SSD\n\
 d:Ge/TopJaw/RotZ                        = 90 deg\n\
 s:Ge/TopJaw/DrawingStyle                = "Solid"\n\
-s:Ge/TopJaw/InputFile                   = "CAD/Jaw"\n\
+s:Ge/TopJaw/InputFile                   = "{}CAD/Jaw"\n\
 s:Ge/TopJaw/FileFormat                  = "stl" \n\
 d:Ge/TopJaw/Units                       = 1 mm \n\
 s:Ge/TopJaw/Color                       = "Grey160"\n\
@@ -164,13 +164,17 @@ def CreateTopasArcSequence(
     right_leaf_positions: list,
     left_jaw_positions: list,
     right_jaw_positions: list,
+    cluster = False,
     materials=materials,
     jaws=jaws,
     mlcgroup=mlcgroup,
     placement_left=placement_left,
     placement_right=placement_right,
 ):
-
+    if cluster:
+        cluster = "../Modell/"
+    else:
+        cluster = ""
     LeafGap = 90 / 1000
     RotXl = [
         180
@@ -278,7 +282,7 @@ def CreateTopasArcSequence(
         os.path.join(planname + ".txt"),"w") as file:
         file.writelines(
             header.format(
-                planname,
+                planname.split("/")[-1],
                 len(left_jaw_positions),
                 times,
                 len(left_jaw_positions),
@@ -294,13 +298,15 @@ def CreateTopasArcSequence(
             )
         )
 
-        file.writelines(materials)
+        file.writelines(materials.format(cluster))
         file.writelines(
             jaws.format(
+                cluster,
                 len(left_jaw_positions),
                 times,
                 len(left_jaw_positions),
                 leftjawvalues,
+                cluster,
                 len(left_jaw_positions),
                 times,
                 len(left_jaw_positions),
@@ -358,6 +364,7 @@ def CreateTopasArcSequence(
                     RotX[i],
                     i,
                     i,
+                    cluster,
                     i,
                     i,
                     i,
@@ -387,6 +394,7 @@ def CreateTopasArcSequence(
                     RotXR[leaf_num - 1 - i],
                     i,
                     i,
+                    cluster,
                     i,
                     i,
                     i,
