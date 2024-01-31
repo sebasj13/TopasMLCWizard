@@ -25,21 +25,21 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
 
                 mlc_positions = []
                 for k in range(80):
-                    mlc_positions += [[-1*round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[k+80],2),
-                                      -1*round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[k],2),]]
+                    mlc_positions += [[round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[k],2),
+                                      round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[k+80],2),]]
                                        
                 for mlc_index in range(len(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence)):
                     if ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].RTBeamLimitingDeviceType in ["ASYMY"] :
                         break
 
-                jaw_positions = [-1*round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[0],2), 
-                                 -1*round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[1],2)]
+                jaw_positions = [round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[0],2), 
+                                 round(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].LeafJawPositions[1],2)]
                 if j != 0 and jaw_positions[0] == jaw_positions[1]:
                     jaw_positions = control_point_fields[-1][1]
 
                 control_point_fields += [[mlc_positions, jaw_positions]]
 
         for i in range(len(control_point_fields)):
-            CF.sequence.append(MLCField(C, CF, control_point_fields[i][0], control_point_fields[i][1], gantry_angles[i], collimator_angles[i], couch_angles[i], i))
+            CF.sequence.append(MLCField(C, CF, list(reversed(control_point_fields[i][0])), list(reversed(control_point_fields[i][1])), gantry_angles[i], collimator_angles[i], couch_angles[i], i))
 
         return
