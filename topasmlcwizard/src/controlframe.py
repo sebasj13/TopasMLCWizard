@@ -3,6 +3,7 @@ from .mlc_field import MLCField
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from .rtplan_loadin import load_fields_from_rtplan
 from .topas_loadin import load_fields_from_topas
+from .field_def import *
 from threading import Thread
 import tkdial as tkd
 
@@ -178,7 +179,31 @@ class CF(ctk.CTkFrame):
         self.after(time, lambda: self.show_mlc_sequence(iteration+1))
 
     def save_mlc_sequence(self):
-        pass
+        planname = asksaveasfilename(filetypes=[("TOPAS Sequence", "*.txt")])
+        if planname == "": return
+        """
+        planname: str,
+        gantry_angles: list,
+        collimator_angles: list,
+        couch_angles: list,
+        left_leaf_positions: list,
+        right_leaf_positions: list,
+        left_jaw_positions: list,
+        right_jaw_positions: list,
+        """
+        gantry_angles, collimator_angles, couch_angles, left_jaw_positions, right_jaw_positions = [], [], [], [], [],
+        left_leaf_positions, right_leaf_positions, = [[] for i in range(len(self.sequence))], [[] for i in range(len(self.sequence))]
+        for i, field in enumerate(self.sequence):
+            gantry_angles += [field.gantry_angle]
+            collimator_angles += [field.collimator_angle]
+            couch_angles += [field.couch_angle]
+            for j in range(80):
+                left_leaf_positions[i] += [field.leaf_positions[j][0]]
+                right_leaf_positions[i] += [field.leaf_positions[j][1]]
+            left_jaw_positions += [field.jaw_positions[1]]
+            right_jaw_positions += [field.jaw_positions[0]]
+
+        CreateTopasArcSequence(planname.split("/")[-1], gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions)
 
     def load_mlc_field(self, event=None, index=None, show=False):
 
