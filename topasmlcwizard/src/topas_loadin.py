@@ -52,8 +52,13 @@ def load_fields_from_topas(topas_path, C, CF):
             bottom_jaw_positions = line.split("=")[1]
             continue
 
+
     top_jaw_positions    = np.asfarray(list(map(str.strip,top_jaw_positions.split()[:-1]))).tolist()[1:]
     bottom_jaw_positions = np.asfarray(list(map(str.strip,bottom_jaw_positions.split()[:-1]))).tolist()[1:]
+
+    if top_jaw_positions[0] < 0:
+        top_jaw_positions, bottom_jaw_positions = bottom_jaw_positions, top_jaw_positions
+
     mlc_left_positions   = np.asfarray(mlc_left_positions).T.tolist()
     mlc_left_positions
     mlc_right_positions  = np.asfarray(mlc_right_positions).T.tolist()
