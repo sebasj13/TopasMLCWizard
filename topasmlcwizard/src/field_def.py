@@ -162,10 +162,11 @@ def field_size_calc_jaws(field_size):
     return round(((x1 + x2) * 10 + correction(field_size / 2)), 5)
 
 def top_jaw_overtravel_calc(field_size):
-    return -99.95833 - 0.4656239*field_size - 0.00004317857*field_size**2
+    return -1* (-99.95833 - 0.4656239*field_size - 0.00004317857*field_size**2)
 
 def bottom_jaw_overtravel_calc(field_size):
-    return -1*top_jaw_overtravel_calc(-1*field_size)
+    field_size *= -1
+    return -99.95833 - 0.4656239*field_size - 0.00004317857*field_size**2
 
 def CreateTopasArcSequence(
     planname: str,
@@ -281,7 +282,7 @@ def CreateTopasArcSequence(
             right_jaw_values.append(100)
         else:
             right_jaw_values.append(
-                -(100 + field_size_calc_jaws(abs(right_jaw_positions[j])))
+                100 + field_size_calc_jaws(abs(right_jaw_positions[j]))
             )
 
     leftjawvalues = " ".join([f"{i} " for i in left_jaw_values])[:-1]
