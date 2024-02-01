@@ -23,7 +23,7 @@ def load_fields_from_topas(topas_path, C, CF):
     
     def inverse_yscale_bottom(y):
         idx = (np.abs(np.array(y_array_bottom) - y)).argmin()
-        return round(x_array[idx],3)
+        return -1*round(x_array[idx],3)
 
     control_point_fields = []
 
@@ -82,10 +82,16 @@ def new_field_calc(x, left=True):
     x1 = field_size * cil / (2 * sad)
     x2 = r * (1 / (np.cos(np.arctan(field_size / (2 * sad)))) - 1)
 
+    def right_leaf_overtravel_calc(field_size):
+        return -77.12921 - 0.3400335*field_size - 0.00006644729*field_size**2
+
+    def left_leaf_overtravel_calc(field_size):
+        return -77.18618 + 0.3438024*field_size - 0.00009227649*field_size**2
+    
     if not left:
 
         if x < 0:
-            return round(  -77.5 +((x1 + x2) * 10 + correction(field_size / 0.2))   , 5)
+            return round(  right_leaf_overtravel_calc(x)  , 5)
         elif x > 0:
             return round(  -77.5 -((x1 + x2) * 10 + correction(field_size / 0.2))   , 5)
         else:
@@ -95,7 +101,7 @@ def new_field_calc(x, left=True):
         if x < 0:
             return round(  -77.5 -((x1 + x2) * 10 + correction(field_size / 0.2))   , 5)
         elif x > 0:
-            return round(  -77.5 +((x1 + x2) * 10 + correction(field_size / 0.2))   , 5)
+            return round(  left_leaf_overtravel_calc(x)   , 5)
         else:
             return -77.25
 
@@ -103,8 +109,14 @@ def new_field_calc(x, left=True):
 def field_size_calc_jaws(x, top=True):
 
     def correction(field_size):
-
         return 10 * (0.00155198 * field_size - 0.0411672)
+    
+    def top_jaw_overtravel_calc(field_size):
+        return -99.95833 - 0.4656239*field_size - 0.00004317857*field_size**2
+
+    def bottom_jaw_overtravel_calc(field_size):
+        return -1*top_jaw_overtravel_calc(-1*field_size)
+
 
     field_size = abs(x) * 0.2
     cil = 46.2
@@ -116,14 +128,14 @@ def field_size_calc_jaws(x, top=True):
 
     if not top:
         if x > 0:
-            return round( 100+((x1 + x2) * 10 + correction(field_size / 2)) , 5)
+            return round( bottom_jaw_overtravel_calc(x) , 5)
         elif x < 0:
-            return round( 100-((x1 + x2) * 10 + correction(field_size / 2)) , 5)
+            return round( 100+((x1 + x2) * 10 + correction(field_size / 2)) , 5)
         else:
             return 100
     else:
         if x < 0:
-            return round( -100+((x1 + x2) * 10 + correction(field_size / 2)) , 5)
+            return round( top_jaw_overtravel_calc(x) , 5)
         elif x > 0:
             return round( -100-((x1 + x2) * 10 + correction(field_size / 2)) , 5)
         else:

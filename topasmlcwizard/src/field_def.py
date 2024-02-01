@@ -146,10 +146,6 @@ def right_leaf_overtravel_calc(field_size):
 def left_leaf_overtravel_calc(field_size):
     return -77.18618 + 0.3438024*field_size - 0.00009227649*field_size**2
 
-def leaf_overtravel_calc(field_size):
-
-    return -76.985 - 0.3363666*field_size - 0.00004712396*field_size**2
-
 def field_size_calc_jaws(field_size):
     def correction(field_size):
 
@@ -165,6 +161,11 @@ def field_size_calc_jaws(field_size):
 
     return round(((x1 + x2) * 10 + correction(field_size / 2)), 5)
 
+def top_jaw_overtravel_calc(field_size):
+    return -99.95833 - 0.4656239*field_size - 0.00004317857*field_size**2
+
+def bottom_jaw_overtravel_calc(field_size):
+    return -1*top_jaw_overtravel_calc(-1*field_size)
 
 def CreateTopasArcSequence(
     planname: str,
@@ -269,22 +270,22 @@ def CreateTopasArcSequence(
             left_jaw_values.append(-100)
         else:
             left_jaw_values.append(
-                -(100 - field_size_calc_jaws(abs(left_jaw_positions[j])))
+                bottom_jaw_overtravel_calc(left_jaw_positions[j])
             )
 
         if right_jaw_positions[j] < 0:
             right_jaw_values.append(
-                -(100 - field_size_calc_jaws(abs(right_jaw_positions[j])))
+                top_jaw_overtravel_calc(right_jaw_positions[j])
             )
         elif right_jaw_positions[j] == 0:
-            right_jaw_values.append(-100)
+            right_jaw_values.append(100)
         else:
             right_jaw_values.append(
                 -(100 + field_size_calc_jaws(abs(right_jaw_positions[j])))
             )
 
     leftjawvalues = " ".join([f"{i} " for i in left_jaw_values])[:-1]
-    rightjawvalues = " ".join([f"{-i} " for i in right_jaw_values])[:-1]
+    rightjawvalues = " ".join([f"{i} " for i in right_jaw_values])[:-1]
     gantry_angle_values = " ".join([f"{i} " for i in gantry_angles])
     collimator_angle_values = " ".join([f"{i} " for i in collimator_angles])
     couch_angle_values = " ".join([f"{i} " for i in couch_angles])
