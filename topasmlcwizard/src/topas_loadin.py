@@ -61,7 +61,7 @@ def load_fields_from_topas(topas_path, C, CF):
 
     for i in range(len(top_jaw_positions)):
 
-        control_point_fields += [[list(zip( list(reversed(list(map(inverse_xscale_left,mlc_left_positions[i])))), list(reversed(list(map(inverse_xscale_right,mlc_right_positions[i])))))), [inverse_yscale_bottom(bottom_jaw_positions[i]), -1*inverse_yscale_top(top_jaw_positions[i]) ]]]
+        control_point_fields += [[list(zip( list(reversed(list(map(inverse_xscale_left,mlc_left_positions[i])))), list(reversed(list(map(inverse_xscale_right,mlc_right_positions[i])))))), [inverse_yscale_bottom(top_jaw_positions[i]), -1*inverse_yscale_top(bottom_jaw_positions[i]) ]]]
         CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], 0,0,0, i))
 
     return
