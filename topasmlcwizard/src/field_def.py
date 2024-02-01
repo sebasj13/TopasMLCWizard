@@ -120,6 +120,7 @@ dv:Tf/TopJawPos/Values                  = {} {} mm\n\n'
 
 
 def new_field_calc(field_size):
+    #For no overtravel
     def correction(field_size):
         return (
             (-3.88962 * 10 ** -6) * field_size ** 2
@@ -138,6 +139,16 @@ def new_field_calc(field_size):
 
     return round((x1 + x2) * 10 + correction(field_size / 0.2), 5)
 
+def right_leaf_overtravel_calc(field_size):
+
+    return -77.12921 - 0.3400335*field_size - 0.00006644729*field_size**2
+
+def left_leaf_overtravel_calc(field_size):
+    return -77.18618 + 0.3438024*field_size - 0.00009227649*field_size**2
+
+def leaf_overtravel_calc(field_size):
+
+    return -76.985 - 0.3363666*field_size - 0.00004712396*field_size**2
 
 def field_size_calc_jaws(field_size):
     def correction(field_size):
@@ -331,12 +342,12 @@ def CreateTopasArcSequence(
                     temp1.append(-77.25)
                 else:
                     temp1.append(
-                        -(77.5 - new_field_calc(abs(left_leaf_positions[i][j])))
+                        left_leaf_overtravel_calc(left_leaf_positions[i][j])
                     )
 
                 if right_leaf_positions[i][j] < 0:
                     temp2.append(
-                        -(77.5 - new_field_calc(abs(right_leaf_positions[i][j])))
+                        right_leaf_overtravel_calc(right_leaf_positions[i][j])
                     )
                 elif right_leaf_positions[i][j] == 0:
                     temp2.append(-77.25)
