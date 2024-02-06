@@ -21,8 +21,8 @@ class CF(ctk.CTkFrame):
         self.rowconfigure(4, weight=1)
         self.rowconfigure(5, weight=0, minsize=300)
         self.rowconfigure(6, weight=1)
-        self.rowconfigure(7, weight=0)
-        self.rowconfigure(8, weight=0, minsize=150)
+        self.rowconfigure(7, weight=0, minsize=150)
+        self.rowconfigure(8, weight=0)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -104,7 +104,7 @@ class CF(ctk.CTkFrame):
         self.loadsequencebutton.grid(row=0, column=1, pady=(5,5), sticky="nsew")
         self.savesequencebutton = ctk.CTkButton(self.saveframe, text="Save MLC Sequence", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_sequence)
         self.savesequencebutton.grid(row=0, column=2, pady=(5,5), sticky="nsew")
-        self.saveframe.grid(row=7, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.saveframe.grid(row=8, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
         #FIELD SEQUENCE BROWSER
         self.fieldseqframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -119,7 +119,7 @@ class CF(ctk.CTkFrame):
         self.fieldseqtitle.grid(row=0, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollframe.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
         self.fieldseqscrollcanvas.pack(fill="both", expand=True)
-        self.fieldseqframe.grid(row=8, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
+        self.fieldseqframe.grid(row=7, column=0, columnspan=2, pady=(5,5), sticky="sew", padx=(5,5))
 
 
         self.dialframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
