@@ -15,18 +15,18 @@ class CF(ctk.CTkFrame):
         self.pack_propagate(False)
         self.grid_propagate(False)
         self.rowconfigure(0, weight=0)
-        self.rowconfigure(1, weight=0, minsize=300)
+        self.rowconfigure(1, weight=0)
         self.rowconfigure(2, weight=0)
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
-        self.rowconfigure(5, weight=0)
+        self.rowconfigure(5, weight=0, minsize=300)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(7, weight=0)
         self.rowconfigure(8, weight=0, minsize=150)
         self.columnconfigure(0, weight=1, minsize=330)
         self.columnconfigure(1, weight=1, minsize=330)   
         self.titleframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
-        self.title = ctk.CTkLabel(self.titleframe, text="TOPAS MLC Wizard", font=("Bahnschrift", 30, "bold"), fg_color="#2B2B2B")
+        self.title = ctk.CTkLabel(self.titleframe, text="ESMOCA FieldForge", font=("Bahnschrift", 30, "bold"), fg_color="#2B2B2B")
         self.titleframe.grid_propagate(False)
         self.title.pack(fill="both", pady=(10,10), expand=True, padx=(5,5), side="left")
         self.titleframe.grid(row=0, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
@@ -45,7 +45,7 @@ class CF(ctk.CTkFrame):
         self.squarebutton = ctk.CTkButton(self.sq_field, text="Square Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.square)
         self.squareentry.grid(row=0, column=0, pady=(5,5), sticky="s")
         self.squarebutton.grid(row=1, column=0, pady=(5,5), sticky="n")
-        self.sq_field.grid(row=1, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.sq_field.grid(row=5, column=0, pady=(5,5), sticky="nsew", padx=(5,5))
 
         #OFFAXIS FIELD
         self.rec_field = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
@@ -69,7 +69,7 @@ class CF(ctk.CTkFrame):
         self.y2label = ctk.CTkLabel(self.rec_field, text="Y2", font=("Bahnschrift", 15), fg_color="#2B2B2B")
         self.offaxisbutton = ctk.CTkButton(self.rec_field, text="Rectangular Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.offaxis, width=100)
 
-        self.rec_field.grid(row=1, column=1, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.rec_field.grid(row=5, column=1, pady=(5,5), sticky="nsew", padx=(5,5))
 
         #grid in a 1 - 2 - 1 shape, with y2 on top, then x1 and x2, then y1 on bottom
         self.y2label.grid(row=0, column=1, pady=(5,5), sticky="nsew")
@@ -84,11 +84,11 @@ class CF(ctk.CTkFrame):
 
         #DRAW RECTANGLE
         self.drawrectbutton = ctk.CTkButton(self, text="Draw Rectangle", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.drawrect)
-        self.drawrectbutton.grid(row=2, column=0, pady=(5,5), sticky="nsew")
+        self.drawrectbutton.grid(row=4, column=0, pady=(5,5), sticky="sew")
 
         #SAVE/LOAD MLC FIELD
         self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
-        self.savemlcbutton.grid(row=2, column=1, pady=(5,5), sticky="nsew")
+        self.savemlcbutton.grid(row=6, column=0, columnspan=2,  pady=(5,5), sticky="n")
 
         #SHOW/LOAD/SAVE MLC SEQUENCE
 
@@ -129,16 +129,16 @@ class CF(ctk.CTkFrame):
         self.dialframe.columnconfigure(1, weight=1)
         self.dialframe.columnconfigure(2, weight=1)
 
-        self.gantrydial = tkd.Jogwheel(self.dialframe, text="Gantry: ", start=360, end=00, start_angle=90, divisions=10, scroll_steps=1, end_angle=360,button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.gantrydial = tkd.Jogwheel(self.dialframe, text="Gantry: ", start=360, end=00, start_angle=90, divisions=22.5, scroll_steps=1, end_angle=360,button_radius=10, fg="#2B2B2B", bg="#2B2B2B", text_color="white", text_font=("Bahnschrift", 10), radius=180, integer=True)
         self.gantrydial.grid(row=0, column=0, pady=(10,5), sticky="nsew", padx=(25,5))
         self.gantrydial.set(0)
-        self.collimatordial = tkd.Jogwheel(self.dialframe, text="Collimator: ", start=360, end=0, divisions=10, start_angle=90, end_angle=360,scroll_steps=1, button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.collimatordial = tkd.Jogwheel(self.dialframe, text="Collimator: ", start=360, end=0, divisions=22.5, start_angle=90, end_angle=360,scroll_steps=1, button_radius=10, fg="#2B2B2B", bg="#2B2B2B", text_color="white", text_font=("Bahnschrift", 10), radius=180, integer=True)
         self.collimatordial.grid(row=0, column=1, pady=(10,5), sticky="nsew", padx=(5,5))    
         self.collimatordial.set(0)
-        self.couchdial = tkd.Jogwheel(self.dialframe,text="Couch: ", start=360, end=0, divisions=10, start_angle=90, end_angle=360, scroll_steps=1, button_radius=10, bg="#2B2B2B", text_font=("Bahnschrift", 10), radius=180, integer=True)
+        self.couchdial = tkd.Jogwheel(self.dialframe,text="Couch: ", start=360, end=0, divisions=22.5, start_angle=90, end_angle=360, scroll_steps=1, button_radius=10, fg="#2B2B2B", bg="#2B2B2B", text_color="white", text_font=("Bahnschrift", 10), radius=180, integer=True)
         self.couchdial.grid(row=0, column=2, pady=(10,5), sticky="nsew", padx=(5,5))
         self.couchdial.set(0)
-        self.dialframe.grid(row=5, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
+        self.dialframe.grid(row=1, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
 
 
