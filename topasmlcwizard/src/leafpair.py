@@ -36,13 +36,13 @@ class LeafPair():
         self.C.tag_bind(self.rightleaf, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.rightleaf, "<B1-Motion>", self.drag_motion)
 
-        self.leftleaftext = self.C.create_text(self.pixelx[0]+self.w//2,self.pixely + self.h//2, text=f"LL{self.number}: {self.xscale(0)}", fill="white", anchor="w", font=("Arial",9))
+        self.leftleaftext = self.C.create_text(self.pixelx[0]+self.w//2,self.pixely + self.h//2, text=f"LL{self.number}: {self.xscale(0)}", fill="black", anchor="w", font=("Arial",9))
         self.C.tag_bind(self.leftleaftext, "<Enter>", self.hand_enter)
         self.C.tag_bind(self.leftleaftext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.leftleaftext, "<B1-Motion>", self.drag_motion)
         self.C.tag_bind(self.leftleaftext, "<ButtonRelease-1>", self.drag_end)
 
-        self.rightleaftext = self.C.create_text(self.pixelx[1]+self.w//2,self.pixely + self.h//2, text=f"RL{self.number}: {self.xscale(960)}", fill="white", anchor="e", font=("Arial",9))
+        self.rightleaftext = self.C.create_text(self.pixelx[1]+self.w//2,self.pixely + self.h//2, text=f"RL{self.number}: {self.xscale(960)}", fill="black", anchor="e", font=("Arial",9))
         self.C.tag_bind(self.rightleaftext, "<Enter>", self.hand_enter)
         self.C.tag_bind(self.rightleaftext, "<Button-1>", self.drag_start)
         self.C.tag_bind(self.rightleaftext, "<B1-Motion>", self.drag_motion)
