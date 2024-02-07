@@ -6,7 +6,7 @@ import sys
 
 class MLCField():
 
-    def __init__(self, parent, CF, leaf_positions, jaw_positions, gantry_angle, collimator_angle, couch_angle, index):
+    def __init__(self, parent, CF, leaf_positions, jaw_positions, gantry_angle, collimator_angle, couch_angle, ssd, depth, index):
         self.parent = parent
         self.index = index
         self.select = False
@@ -17,6 +17,8 @@ class MLCField():
         self.gantry_angle = gantry_angle
         self.collimator_angle = collimator_angle
         self.couch_angle = couch_angle
+        self.ssd = ssd
+        self.depth = depth
 
         self.image = self.create_bitmap(size=80)
         self.closeimage = ImageTk.PhotoImage(Image.open(self.resource_path(os.path.join("img","close.png"))).resize((20,20), Image.Resampling.LANCZOS))
@@ -103,6 +105,8 @@ class MLCField():
         self.CF.gantrydial.set(self.gantry_angle)
         self.CF.collimatordial.set(self.collimator_angle)
         self.CF.couchdial.set(self.couch_angle)
+        self.CF.SSD.set(self.ssd)
+        self.CF.Depth.set(self.depth)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
         self.close_image_id = self.C.create_image(self.index*110+40,105, image=self.closeimage, anchor="nw")
         self.C.tag_bind(self.image_id, "<Enter>", lambda event: self.C.config(cursor="hand2"))
@@ -119,6 +123,8 @@ class MLCField():
         self.CF.gantrydial.set(0)
         self.CF.collimatordial.set(0)
         self.CF.couchdial.set(0)
+        self.CF.SSD.set("90")
+        self.CF.Depth.set("10")
         self.image = self.create_bitmap(size=80, border=False)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
         self.close_image_id = self.C.create_image(self.index*110+40,105, image=self.closeimage, anchor="nw")

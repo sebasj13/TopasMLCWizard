@@ -15,7 +15,7 @@ class CF(ctk.CTkFrame):
         self.pack_propagate(False)
         self.grid_propagate(False)
         self.rowconfigure(0, weight=0)
-        self.rowconfigure(1, weight=0)
+        self.rowconfigure(1, weight=0, minsize=250)
         self.rowconfigure(2, weight=0)
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
@@ -125,6 +125,7 @@ class CF(ctk.CTkFrame):
         self.dialframe = ctk.CTkFrame(self, fg_color="#2B2B2B", border_color="white", border_width=2)
         self.dialframe.grid_propagate(False)    
         self.dialframe.rowconfigure(0, weight=1)
+        self.dialframe.rowconfigure(1, weight=0)
         self.dialframe.columnconfigure(0, weight=1)
         self.dialframe.columnconfigure(1, weight=1)
         self.dialframe.columnconfigure(2, weight=1)
@@ -138,6 +139,23 @@ class CF(ctk.CTkFrame):
         self.couchdial = tkd.Jogwheel(self.dialframe,text="Couch: ", start=360, end=0, divisions=22.5, start_angle=90, end_angle=360, scroll_steps=1, button_radius=10, fg="#2B2B2B", bg="#2B2B2B", text_color="white", text_font=("Bahnschrift", 10), radius=180, integer=True)
         self.couchdial.grid(row=0, column=2, pady=(10,5), sticky="nsew", padx=(5,5))
         self.couchdial.set(0)
+        self.SSDandDepth = ctk.CTkFrame(self.dialframe, fg_color="#2B2B2B")
+        self.SSDandDepth.columnconfigure(0, weight=1)
+        self.SSDandDepth.columnconfigure(1, weight=1)
+        self.SSDandDepth.columnconfigure(2, weight=1)
+        self.SSDandDepth.columnconfigure(3, weight=1)
+
+        self.SSD = ctk.StringVar(value="90")
+        self.Depth = ctk.StringVar(value="10")
+        self.SSDLabel = ctk.CTkLabel(self.SSDandDepth, text="Source-Surface-Distance:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
+        self.SSDEntry = ctk.CTkEntry(self.SSDandDepth, width=60, font=("Bahnschrift", 15), fg_color="#2B2B2B", textvariable=self.SSD)
+        self.DepthLabel = ctk.CTkLabel(self.SSDandDepth, text="Depth:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
+        self.DepthEntry = ctk.CTkEntry(self.SSDandDepth, width=60, font=("Bahnschrift", 15), fg_color="#2B2B2B", textvariable=self.Depth)
+        self.SSDLabel.grid(row=0, column=0, pady=(5,5), sticky="nse", padx=(5,5))
+        self.SSDEntry.grid(row=0, column=1, pady=(5,5), sticky="nsw", padx=(5,5))
+        self.DepthLabel.grid(row=0, column=2, pady=(5,5), sticky="nse", padx=(5,5))
+        self.DepthEntry.grid(row=0, column=3, pady=(5,5), sticky="nsw", padx=(5,5))
+        self.SSDandDepth.grid(row=1, column=0, columnspan=3, pady=(5,5), sticky="sew", padx=(5,5))
         self.dialframe.grid(row=1, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
 
 
@@ -148,10 +166,10 @@ class CF(ctk.CTkFrame):
             leaf_positions.append(leafpair.get_leaf_positions())
         jaw_positions = self.parent.C.jawpair.get_jaw_positions() 
         if self.selected_field == None:
-            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), len(self.sequence)))
+            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), len(self.sequence)))
         else:
             self.sequence[self.selected_field].delete()
-            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.selected_field)
+            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), self.selected_field)
 
         self.selected_field = None
 
@@ -184,12 +202,14 @@ class CF(ctk.CTkFrame):
         planname = asksaveasfilename(filetypes=[("TOPAS Sequence", "*.txt")])
         cluster = askyesno("Cluster", "Define field for the IANVS cluster environment?")
         if planname == "": return
-        gantry_angles, collimator_angles, couch_angles, left_jaw_positions, right_jaw_positions = [], [], [], [], [],
+        gantry_angles, collimator_angles, couch_angles, left_jaw_positions, right_jaw_positions, ssd, depth = [], [], [], [], [], [], []
         left_leaf_positions, right_leaf_positions, = [[] for i in range(len(self.sequence))], [[] for i in range(len(self.sequence))]
         for i, field in enumerate(self.sequence):
             gantry_angles += [field.gantry_angle]
             collimator_angles += [field.collimator_angle]
             couch_angles += [field.couch_angle]
+            ssd += [float(field.ssd)]
+            depth += [float(field.depth)]
             field.leaf_positions.reverse()
             for j in range(80):
                 left_leaf_positions[i] += [field.leaf_positions[j][0]]
@@ -201,7 +221,7 @@ class CF(ctk.CTkFrame):
             left_jaw_positions += [field.jaw_positions[1]]
             right_jaw_positions += [field.jaw_positions[0]]
 
-        CreateTopasArcSequence(planname, gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions, cluster)
+        CreateTopasArcSequence(planname, gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions, ssd, depth, cluster)
 
     def load_mlc_field(self, event=None, index=None, show=False):
 
@@ -220,6 +240,8 @@ class CF(ctk.CTkFrame):
         self.gantrydial.set(self.sequence[index].gantry_angle)
         self.collimatordial.set(self.sequence[index].collimator_angle)
         self.couchdial.set(self.sequence[index].couch_angle)
+        self.SSD.set(self.sequence[index].ssd)
+        self.Depth.set(self.sequence[index].depth)
         self.parent.C.jawpair.set_top_jaw(self.sequence[index].jaw_positions[0])
         self.parent.C.jawpair.set_bottom_jaw(self.sequence[index].jaw_positions[1])
 

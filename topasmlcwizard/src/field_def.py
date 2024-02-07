@@ -8,12 +8,18 @@ header = '\
 s:Tf/GantryAngles/Function           = "Step"\n\
 s:Tf/CollimatorAngles/Function       = "Step"\n\
 s:Tf/CouchAngles/Function            = "Step"\n\
+s:Tf/SSDs/Function                   = "Step"\n\
+s:Tf/Depths/Function                 = "Step"\n\
 dv:Tf/GantryAngles/Times             = {} {} s\n\
 dv:Tf/CollimatorAngles/Times         = {} {} s\n\
 dv:Tf/CouchAngles/Times              = {} {} s\n\
+dv:Tf/SSDs/Times                     = {} {} s\n\
+dv:Tf/Depths/Times                   = {} {} s\n\
 dv:Tf/GantryAngles/Values            = {} {} deg\n\
 dv:Tf/CollimatorAngles/Values        = {} {} deg\n\
-dv:Tf/CouchAngles/Values             = {} {} deg\n\n'
+dv:Tf/CouchAngles/Values             = {} {} deg\n\
+dv:Tf/SSDs/Values                    = {} {} cm\n\
+dv:Tf/Depths/Values                  = {} {} cm\n\n'
 
 materials = '\
 #################################################################\n\
@@ -177,6 +183,8 @@ def CreateTopasArcSequence(
     right_leaf_positions: list,
     left_jaw_positions: list,
     right_jaw_positions: list,
+    ssd: list,
+    depths: list,
     cluster = False,
     materials=materials,
     jaws=jaws,
@@ -290,6 +298,8 @@ def CreateTopasArcSequence(
     gantry_angle_values = " ".join([f"{i} " for i in gantry_angles])
     collimator_angle_values = " ".join([f"{i} " for i in collimator_angles])
     couch_angle_values = " ".join([f"{i} " for i in couch_angles])
+    ssd_values = " ".join([f"{i} " for i in ssd])
+    depth_values = " ".join([f"{i} " for i in depths])
 
     with open(
         os.path.join(planname + ".txt"),"w") as file:
@@ -303,11 +313,19 @@ def CreateTopasArcSequence(
                 len(left_jaw_positions),
                 times,
                 len(left_jaw_positions),
+                times,
+                len(left_jaw_positions),
+                times,
+                len(left_jaw_positions),
                 gantry_angle_values,
                 len(left_jaw_positions),
                 collimator_angle_values,
                 len(left_jaw_positions),
-                couch_angle_values,              
+                couch_angle_values,    
+                len(left_jaw_positions),
+                ssd_values,  
+                len(left_jaw_positions),
+                depth_values,            
             )
         )
 

@@ -30,13 +30,31 @@ def load_fields_from_topas(topas_path, C, CF):
     with open(topas_path, 'r') as file:
         lines = file.readlines()
 
-    top_jaw_positions = []
-    bottom_jaw_positions = []
     mlc_left_positions = [[] for i in range(80)]
     mlc_right_positions = [[] for i in range(80)]
 
     for line in lines:
-        if "LeftLeaf" in line and "Pos/Values" in line:
+        if "GantryAngles/Values" in line:
+            gantry_angles = line.split("=")[1]
+            continue
+
+        elif "CollimatorAngles/Values" in line:
+            collimator_angles = line.split("=")[1]
+            continue
+
+        elif "CouchAngles/Values" in line:
+            couch_angles = line.split("=")[1]
+            continue
+
+        elif "SSDs/Values" in line:
+            ssd = line.split("=")[1]
+            continue
+
+        elif "Depths/Values" in line:
+            depths = line.split("=")[1]
+            continue
+
+        elif "LeftLeaf" in line and "Pos/Values" in line:
             mlc_left_positions[int(line.split("LeftLeaf")[1].split("Pos")[0])] = list(np.asfarray(list(map(str.strip,line.split("=")[1].split()[:-1])))[1:])
             continue
 
@@ -52,7 +70,11 @@ def load_fields_from_topas(topas_path, C, CF):
             bottom_jaw_positions = line.split("=")[1]
             continue
 
-
+    gantry_angles = np.asfarray(list(map(str.strip,gantry_angles.split()[:-1]))).tolist()[1:]
+    collimator_angles = np.asfarray(list(map(str.strip,collimator_angles.split()[:-1]))).tolist()[1:]
+    couch_angles = np.asfarray(list(map(str.strip,couch_angles.split()[:-1]))).tolist()[1:]
+    ssd = np.asfarray(list(map(str.strip,ssd.split()[:-1]))).tolist()[1:]
+    depths = np.asfarray(list(map(str.strip,depths.split()[:-1]))).tolist()[1:]
     top_jaw_positions    = np.asfarray(list(map(str.strip,top_jaw_positions.split()[:-1]))).tolist()[1:]
     bottom_jaw_positions = np.asfarray(list(map(str.strip,bottom_jaw_positions.split()[:-1]))).tolist()[1:]
 
@@ -67,7 +89,7 @@ def load_fields_from_topas(topas_path, C, CF):
     for i in range(len(top_jaw_positions)):
 
         control_point_fields += [[list(zip( list(reversed(list(map(inverse_xscale_left,mlc_left_positions[i])))), list(reversed(list(map(inverse_xscale_right,mlc_right_positions[i])))))), [inverse_yscale_bottom(top_jaw_positions[i]), -1*inverse_yscale_top(bottom_jaw_positions[i]) ]]]
-        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], 0,0,0, i))
+        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depths[i], i))
 
     return
 
