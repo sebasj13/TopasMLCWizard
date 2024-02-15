@@ -54,6 +54,12 @@ def load_fields_from_topas(topas_path, C, CF):
             depths = line.split("=")[1]
             continue
 
+        elif "TransYQVX" in line:
+            transyqvx = line.split("=")[1]
+
+        elif "TransXQVY/Values" in line:
+            transxqvy = line.split("=")[1]
+
         elif "LeftLeaf" in line and "Pos/Values" in line:
             mlc_left_positions[int(line.split("LeftLeaf")[1].split("Pos")[0])] = list(np.asfarray(list(map(str.strip,line.split("=")[1].split()[:-1])))[1:])
             continue
@@ -74,9 +80,13 @@ def load_fields_from_topas(topas_path, C, CF):
     collimator_angles = np.asfarray(list(map(str.strip,collimator_angles.split()[:-1]))).tolist()[1:]
     couch_angles = np.asfarray(list(map(str.strip,couch_angles.split()[:-1]))).tolist()[1:]
     ssd = np.asfarray(list(map(str.strip,ssd.split()[:-1]))).tolist()[1:]
+    ssd = [50-float(i) for i in ssd]
     depths = np.asfarray(list(map(str.strip,depths.split()[:-1]))).tolist()[1:]
+    depths = [20-float(i) for i in depths]
     top_jaw_positions    = np.asfarray(list(map(str.strip,top_jaw_positions.split()[:-1]))).tolist()[1:]
     bottom_jaw_positions = np.asfarray(list(map(str.strip,bottom_jaw_positions.split()[:-1]))).tolist()[1:]
+    transyqvx = np.asfarray(list(map(str.strip,transyqvx.split()[:-1]))).tolist()[1:]
+    transxqvy = np.asfarray(list(map(str.strip,transxqvy.split()[:-1]))).tolist()[1:]
 
     if top_jaw_positions[0] < 0:
         top_jaw_positions, bottom_jaw_positions = bottom_jaw_positions, top_jaw_positions
@@ -89,7 +99,7 @@ def load_fields_from_topas(topas_path, C, CF):
     for i in range(len(top_jaw_positions)):
 
         control_point_fields += [[list(zip( list(reversed(list(map(inverse_xscale_left,mlc_left_positions[i])))), list(reversed(list(map(inverse_xscale_right,mlc_right_positions[i])))))), [inverse_yscale_bottom(top_jaw_positions[i]), -1*inverse_yscale_top(bottom_jaw_positions[i]) ]]]
-        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depths[i], i))
+        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depths[i],i, transyqvx[i], transxqvy[i]))
 
     return
 

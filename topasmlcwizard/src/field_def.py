@@ -10,16 +10,22 @@ s:Tf/CollimatorAngles/Function       = "Step"\n\
 s:Tf/CouchAngles/Function            = "Step"\n\
 s:Tf/SSDs/Function                   = "Step"\n\
 s:Tf/Depths/Function                 = "Step"\n\
+s:Tf/TransXQVY/Function              = "Step"\n\
+s:Tf/TransYQVX/Function              = "Step"\n\
 dv:Tf/GantryAngles/Times             = {} {} s\n\
 dv:Tf/CollimatorAngles/Times         = {} {} s\n\
 dv:Tf/CouchAngles/Times              = {} {} s\n\
 dv:Tf/SSDs/Times                     = {} {} s\n\
 dv:Tf/Depths/Times                   = {} {} s\n\
+dv:Tf/TransXQVY/Times                = {} {} s\n\
+dv:Tf/TransYQVX/Times                = {} {} s\n\
 dv:Tf/GantryAngles/Values            = {} {} deg\n\
 dv:Tf/CollimatorAngles/Values        = {} {} deg\n\
 dv:Tf/CouchAngles/Values             = {} {} deg\n\
 dv:Tf/SSDs/Values                    = {} {} cm\n\
-dv:Tf/Depths/Values                  = {} {} cm\n\n'
+dv:Tf/Depths/Values                  = {} {} cm\n\
+dv:Tf/TransXQVY/Values               = {} {} cm\n\
+dv:Tf/TransYQVX/Values               = {} {} cm\n\n'
 
 materials = '\
 #################################################################\n\
@@ -185,6 +191,8 @@ def CreateTopasArcSequence(
     right_jaw_positions: list,
     ssd: list,
     depths: list,
+    transyqvx: list,
+    transxqvy: list,
     cluster = False,
     materials=materials,
     jaws=jaws,
@@ -193,7 +201,7 @@ def CreateTopasArcSequence(
     placement_right=placement_right,
 ):
     if cluster:
-        cluster = "../Modell/"
+        cluster = "/scratch/user/ajkjm/Elekta_Synergy/Modell/"
     else:
         cluster = ""
     LeafGap = 90 / 1000
@@ -298,14 +306,20 @@ def CreateTopasArcSequence(
     gantry_angle_values = " ".join([f"{i} " for i in gantry_angles])
     collimator_angle_values = " ".join([f"{i} " for i in collimator_angles])
     couch_angle_values = " ".join([f"{i} " for i in couch_angles])
-    ssd_values = " ".join([f"{i} " for i in ssd])
-    depth_values = " ".join([f"{i} " for i in depths])
+    ssd_values = " ".join([f"{-float(i)+50} " for i in ssd])
+    depth_values = " ".join([f"{-float(i)+20} " for i in depths])
+    transyqvx_values = " ".join([f"{i} " for i in transyqvx])
+    transxqvy_values = " ".join([f"{i} " for i in transxqvy])
 
     with open(
         os.path.join(planname + ".txt"),"w") as file:
         file.writelines(
             header.format(
                 planname.split("/")[-1],
+                len(left_jaw_positions),
+                times,
+                len(left_jaw_positions),
+                times,
                 len(left_jaw_positions),
                 times,
                 len(left_jaw_positions),
@@ -325,7 +339,11 @@ def CreateTopasArcSequence(
                 len(left_jaw_positions),
                 ssd_values,  
                 len(left_jaw_positions),
-                depth_values,            
+                depth_values,  
+                len(left_jaw_positions),
+                transyqvx_values,  
+                len(left_jaw_positions),
+                transxqvy_values,       
             )
         )
 
