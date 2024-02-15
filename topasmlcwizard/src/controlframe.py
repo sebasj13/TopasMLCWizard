@@ -237,8 +237,8 @@ class CF(ctk.CTkFrame):
             field.leaf_positions.reverse()
             left_jaw_positions += [field.jaw_positions[1]]
             right_jaw_positions += [field.jaw_positions[0]]
-        with open(os.path.join(os.path.abspath(__file__),os.pardir, ".currentplan"), "w") as f:
-            f.write(planname)
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),os.pardir, ".currentplan"), "w") as f:
+            f.write(planname+".txt")
         CreateTopasArcSequence(planname, gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions, ssd, depth, transyqvx, transxqvy, cluster)
 
     def load_mlc_field(self, event=None, index=None, show=False):
