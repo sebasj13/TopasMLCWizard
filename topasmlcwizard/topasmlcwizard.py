@@ -13,6 +13,7 @@ class MLCWizard(ctk.CTk):
     def __init__(self):
         super().__init__(fg_color="#2B2B2B")
         self.title("ESMOCA FieldForge")
+        self.geometry("1920x1080")
         self.pack_propagate(False)
 
         self.C = MLCCanvas(self)
