@@ -79,14 +79,24 @@ def load_fields_from_topas(topas_path, C, CF):
     gantry_angles = np.asfarray(list(map(str.strip,gantry_angles.split()[:-1]))).tolist()[1:]
     collimator_angles = np.asfarray(list(map(str.strip,collimator_angles.split()[:-1]))).tolist()[1:]
     couch_angles = np.asfarray(list(map(str.strip,couch_angles.split()[:-1]))).tolist()[1:]
-    ssd = np.asfarray(list(map(str.strip,ssd.split()[:-1]))).tolist()[1:]
-    ssd = [50-float(i) for i in ssd]
-    depths = np.asfarray(list(map(str.strip,depths.split()[:-1]))).tolist()[1:]
-    depths = [20-float(i) for i in depths]
+    try: 
+        ssd = np.asfarray(list(map(str.strip,ssd.split()[:-1]))).tolist()[1:]
+        ssd = [50-float(i) for i in ssd]
+    except UnboundLocalError:
+        ssd = [90 for i in range(len(gantry_angles))]
+    try:
+        depths = np.asfarray(list(map(str.strip,depths.split()[:-1]))).tolist()[1:]
+        depths = [20-float(i) for i in depths]
+    except UnboundLocalError:
+        depths = [10 for i in range(len(gantry_angles))]
     top_jaw_positions    = np.asfarray(list(map(str.strip,top_jaw_positions.split()[:-1]))).tolist()[1:]
     bottom_jaw_positions = np.asfarray(list(map(str.strip,bottom_jaw_positions.split()[:-1]))).tolist()[1:]
-    transyqvx = np.asfarray(list(map(str.strip,transyqvx.split()[:-1]))).tolist()[1:]
-    transxqvy = np.asfarray(list(map(str.strip,transxqvy.split()[:-1]))).tolist()[1:]
+    try:
+        transyqvx = np.asfarray(list(map(str.strip,transyqvx.split()[:-1]))).tolist()[1:]
+        transxqvy = np.asfarray(list(map(str.strip,transxqvy.split()[:-1]))).tolist()[1:]
+    except UnboundLocalError:
+        transyqvx = [0 for i in range(len(gantry_angles))]
+        transxqvy = [0 for i in range(len(gantry_angles))]
 
     if top_jaw_positions[0] < 0:
         top_jaw_positions, bottom_jaw_positions = bottom_jaw_positions, top_jaw_positions
