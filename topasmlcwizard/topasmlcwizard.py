@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import os
 import sys
+from threading import Thread
 
 from .src.controlframe import CF
 from .src.mlccanvas import MLCCanvas
@@ -10,11 +11,13 @@ from .src.mlccanvas import MLCCanvas
 
 class MLCWizard(ctk.CTk):
 
-    def __init__(self):
+    def __init__(self, plan=None):
         super().__init__(fg_color="#2B2B2B")
         self.title("ESMOCA FieldForge")
         self.geometry("1920x1080")
         self.pack_propagate(False)
+
+        self.plan = plan
 
         self.C = MLCCanvas(self)
         self.CF = CF(self)
@@ -30,6 +33,7 @@ class MLCWizard(ctk.CTk):
         self.iconbitmap(self.iconpath)
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
+        self.after(100, self.load_file)
         self.mainloop()
 
     def resource_path(self, relative_path):
@@ -44,6 +48,10 @@ class MLCWizard(ctk.CTk):
            pass
        else:
            self.state('zoomed')
+
+    def load_file(self):
+        if self.plan != None:
+            Thread(target=lambda: self.CF.load_mlc_sequence(self.plan)).start()
 
 if __name__ == "__main__":
     MLCWizard()

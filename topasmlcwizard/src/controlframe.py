@@ -188,8 +188,9 @@ class CF(ctk.CTkFrame):
 
         self.selected_field = None
 
-    def load_mlc_sequence(self):
-        file = askopenfilename(filetypes=[("RTPLAN", "*.dcm"), ("TOPAS Sequence", "*.txt")])
+    def load_mlc_sequence(self, file=None):
+        if file == None:
+            file = askopenfilename(filetypes=[("RTPLAN", "*.dcm"), ("TOPAS Sequence", "*.txt")])
         if file == "": return
 
         if file.endswith(".txt"):
