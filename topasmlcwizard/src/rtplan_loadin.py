@@ -22,9 +22,11 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
                 except Exception: couch_angles += [couch_angles[-1]]
                 try: ssd += [ds.BeamSequence[i].ControlPointSequence[j].SourceToSurfaceDistance]
                 except Exception: ssd += [ssd[-1]]
-                for mlc_index in range(len(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence)):
-                    if ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].RTBeamLimitingDeviceType in ["MLCX","MLCY"] :
-                        break
+                try:
+                    for mlc_index in range(len(ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence)):
+                        if ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDevicePositionSequence[mlc_index].RTBeamLimitingDeviceType in ["MLCX","MLCY"] :
+                            break
+                except Exception: continue
 
                 mlc_positions = []
                 for k in range(80):
