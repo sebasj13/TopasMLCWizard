@@ -177,13 +177,13 @@ def field_size_calc_jaws(x, top=True):
         if x > 0:
             return round( bottom_jaw_overtravel_calc(x) , 5)
         elif x < 0:
-            return round( 100+((x1 + x2) * 10 + correction(field_size / 2)) , 5)
+            return round( 99.75+((x1 + x2) * 10 + correction(field_size / 2)) , 5)
         else:
-            return 100
+            return 99.75
     else:
         if x < 0:
             return round( top_jaw_overtravel_calc(x) , 5)
         elif x > 0:
-            return round( -100-((x1 + x2) * 10 + correction(field_size / 2)) , 5)
+            return round( -99.75-((x1 + x2) * 10 + correction(field_size / 2)) , 5)
         else:
-            return -100
+            return -99.75

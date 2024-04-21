@@ -281,10 +281,10 @@ def CreateTopasArcSequence(
     for j in range(len(left_jaw_positions)):
         if left_jaw_positions[j] < 0:
             left_jaw_values.append(
-                -(100 + field_size_calc_jaws(abs(left_jaw_positions[j])))
+                -(99.75 + field_size_calc_jaws(abs(left_jaw_positions[j])))
             )
         elif left_jaw_positions[j] == 0:
-            left_jaw_values.append(-100)
+            left_jaw_values.append(-99.75)
         else:
             left_jaw_values.append(
                 bottom_jaw_overtravel_calc(left_jaw_positions[j])
@@ -295,10 +295,10 @@ def CreateTopasArcSequence(
                 top_jaw_overtravel_calc(right_jaw_positions[j])
             )
         elif right_jaw_positions[j] == 0:
-            right_jaw_values.append(100)
+            right_jaw_values.append(99.75)
         else:
             right_jaw_values.append(
-                100 + field_size_calc_jaws(abs(right_jaw_positions[j]))
+                99.75 + field_size_calc_jaws(abs(right_jaw_positions[j]))
             )
 
     leftjawvalues = " ".join([f"{i} " for i in left_jaw_values])[:-1]
