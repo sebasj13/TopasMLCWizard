@@ -6,7 +6,7 @@ import sys
 
 class MLCField():
 
-    def __init__(self, parent, CF, leaf_positions, jaw_positions, gantry_angle, collimator_angle, couch_angle, ssd, depth, index, transyqvx=0, transxqvy=0):
+    def __init__(self, parent, CF, leaf_positions, jaw_positions, gantry_angle, collimator_angle, couch_angle, ssd, depth, energy, index, transyqvx=0, transxqvy=0):
         self.parent = parent
         self.index = index
         self.select = False
@@ -19,6 +19,7 @@ class MLCField():
         self.couch_angle = couch_angle
         self.ssd = ssd
         self.depth = depth
+        self.energy = energy
         self.transyqvx = transyqvx
         self.transxqvy = transxqvy
 
@@ -109,6 +110,7 @@ class MLCField():
         self.CF.couchdial.set(self.couch_angle)
         self.CF.SSD.set(self.ssd)
         self.CF.Depth.set(self.depth)
+        self.CF.Energy.set(self.energy)
         self.CF.TransYQVX.set(self.transyqvx)
         self.CF.TransXQVY.set(self.transxqvy)
         self.image_id = self.C.create_image(self.index*110,5, image=self.image, anchor="nw")
@@ -129,6 +131,7 @@ class MLCField():
         self.CF.couchdial.set(0)
         self.CF.SSD.set("90")
         self.CF.Depth.set("10")
+        self.CF.Energy.set("6")
         self.CF.TransYQVX.set("0")
         self.CF.TransXQVY.set("0")
         self.image = self.create_bitmap(size=80, border=False)
@@ -162,6 +165,6 @@ class MLCField():
         self.CF.couchdial.set(0)
         self.CF.SSD.set("90")
         self.CF.Depth.set("10")
+        self.CF.Depth.set("6")
         self.CF.TransYQVX.set("0")
         self.CF.TransXQVY.set("0")
-        

@@ -8,12 +8,17 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
         collimator_angles = []
         couch_angles = []
         ssd = []
+        energy = []
         number_of_beams = len(ds.BeamSequence)
         for i in range(number_of_beams):
             mlc_positions = {}
             control_points = len(ds.BeamSequence[i].ControlPointSequence)
-
+            if ds.BeamSequence[i].PrimaryFluenceModeSequence[0].FluenceMode == "NON_STANDARD":
+                en = "6FFF"
+            else:
+                en = "6"
             for j in range(control_points):
+                energy += [en]
                 try: gantry_angles += [ds.BeamSequence[i].ControlPointSequence[j].GantryAngle]
                 except Exception: gantry_angles += [gantry_angles[-1]]
                 try: collimator_angles += [ds.BeamSequence[i].ControlPointSequence[j].BeamLimitingDeviceAngle]
@@ -47,6 +52,6 @@ def load_fields_from_rtplan(rtplan_path, C, CF):
         ssd = [round(float(x)/10,2) for x in ssd]
         depth = [round(100-ssd[i],2) for i in range(len(ssd))]
         for i in range(len(control_point_fields)):
-            CF.sequence.append(MLCField(C, CF, list(reversed(control_point_fields[i][0])), list(reversed(control_point_fields[i][1])), gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depth[i], i))
+            CF.sequence.append(MLCField(C, CF, list(reversed(control_point_fields[i][0])), list(reversed(control_point_fields[i][1])), gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depth[i], energy[i], i))
 
         return

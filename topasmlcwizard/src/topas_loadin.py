@@ -32,6 +32,7 @@ def load_fields_from_topas(topas_path, C, CF):
 
     mlc_left_positions = [[] for i in range(80)]
     mlc_right_positions = [[] for i in range(80)]
+    energy = ""
 
     for line in lines:
         if "GantryAngles/Values" in line:
@@ -60,6 +61,9 @@ def load_fields_from_topas(topas_path, C, CF):
         elif "TransXQVY/Values" in line:
             transxqvy = line.split("=")[1]
 
+        elif "Energy/Values" in line:
+            energy = line.split("=")[1]
+
         elif "LeftLeaf" in line and "Pos/Values" in line:
             mlc_left_positions[int(line.split("LeftLeaf")[1].split("Pos")[0])] = list(np.asfarray(list(map(str.strip,line.split("=")[1].split()[:-1])))[1:])
             continue
@@ -79,6 +83,10 @@ def load_fields_from_topas(topas_path, C, CF):
     gantry_angles = np.asfarray(list(map(str.strip,gantry_angles.split()[:-1]))).tolist()[1:]
     collimator_angles = np.asfarray(list(map(str.strip,collimator_angles.split()[:-1]))).tolist()[1:]
     couch_angles = np.asfarray(list(map(str.strip,couch_angles.split()[:-1]))).tolist()[1:]
+    if energy == "":
+        energy = ["6" for i in range(len(couch_angles))]
+    else:
+        energy = list(map(lambda x: str.replace(x,'"',""),list(map(str.strip,energy.split()))[1:]))
     try: 
         ssd = np.asfarray(list(map(str.strip,ssd.split()[:-1]))).tolist()[1:]
         ssd = [50-float(i) for i in ssd]
@@ -109,7 +117,7 @@ def load_fields_from_topas(topas_path, C, CF):
     for i in range(len(top_jaw_positions)):
 
         control_point_fields += [[list(zip( list(reversed(list(map(inverse_xscale_left,mlc_left_positions[i])))), list(reversed(list(map(inverse_xscale_right,mlc_right_positions[i])))))), [inverse_yscale_bottom(top_jaw_positions[i]), -1*inverse_yscale_top(bottom_jaw_positions[i]) ]]]
-        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depths[i],i, transyqvx[i], transxqvy[i]))
+        CF.sequence.append(MLCField(C, CF, control_point_fields[-1][0], control_point_fields[-1][1], gantry_angles[i], collimator_angles[i], couch_angles[i], ssd[i], depths[i], energy[i], i, transyqvx[i], transxqvy[i]))
 
     return
 

@@ -15,11 +15,11 @@ class CF(ctk.CTkFrame):
         self.pack_propagate(False)
         self.grid_propagate(False)
         self.rowconfigure(0, weight=0)
-        self.rowconfigure(1, weight=0, minsize=280)
+        self.rowconfigure(1, weight=0, minsize=320)
         self.rowconfigure(2, weight=0)
         self.rowconfigure(3, weight=0)
         self.rowconfigure(4, weight=1)
-        self.rowconfigure(5, weight=0, minsize=300)
+        self.rowconfigure(5, weight=0, minsize=280)
         self.rowconfigure(6, weight=1)
         self.rowconfigure(7, weight=0, minsize=150)
         self.rowconfigure(8, weight=0)
@@ -84,11 +84,11 @@ class CF(ctk.CTkFrame):
 
         #DRAW RECTANGLE
         self.drawrectbutton = ctk.CTkButton(self, text="Draw Rectangle", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.drawrect)
-        self.drawrectbutton.grid(row=4, column=0, pady=(5,5), sticky="sew")
+        self.drawrectbutton.grid(row=6, column=0, pady=(5,5), sticky="n")
 
         #SAVE/LOAD MLC FIELD
         self.savemlcbutton = ctk.CTkButton(self, text="Save MLC Field", font=("Bahnschrift", 15), fg_color="#2B2B2B", command=self.save_mlc_field)
-        self.savemlcbutton.grid(row=6, column=0, columnspan=2,  pady=(5,5), sticky="n")
+        self.savemlcbutton.grid(row=6, column=1, pady=(5,5), sticky="n")
 
         #SHOW/LOAD/SAVE MLC SEQUENCE
 
@@ -144,6 +144,7 @@ class CF(ctk.CTkFrame):
         self.SSDandDepth.columnconfigure(1, weight=1)
         self.SSDandDepth.columnconfigure(2, weight=1)
         self.SSDandDepth.columnconfigure(3, weight=1)
+
         self.SSDandDepth.rowconfigure(0, weight=1)
         self.SSDandDepth.rowconfigure(1, weight=1)
 
@@ -152,6 +153,7 @@ class CF(ctk.CTkFrame):
         self.TransYQVX = ctk.StringVar(value="0")
         self.TransXQVY = ctk.StringVar(value="0")
         self.Depth = ctk.StringVar(value="10")
+        self.Energy = ctk.StringVar(value="6")
         self.SSDLabel = ctk.CTkLabel(self.SSDandDepth, text="Source-Surface-Distance:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
         self.SSDEntry = ctk.CTkEntry(self.SSDandDepth, width=60, font=("Bahnschrift", 15), fg_color="#2B2B2B", textvariable=self.SSD)
         self.DepthLabel = ctk.CTkLabel(self.SSDandDepth, text="Depth:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
@@ -160,6 +162,9 @@ class CF(ctk.CTkFrame):
         self.TransXQVYEntry = ctk.CTkEntry(self.SSDandDepth, width=60, font=("Bahnschrift", 15), fg_color="#2B2B2B", textvariable=self.TransXQVY)
         self.TransYQVXLabel = ctk.CTkLabel(self.SSDandDepth, text="TransYQVX:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
         self.TransYQVXEntry = ctk.CTkEntry(self.SSDandDepth, width=60, font=("Bahnschrift", 15), fg_color="#2B2B2B", textvariable=self.TransYQVX)
+        self.EnergyLabel = ctk.CTkLabel(self.SSDandDepth, text="Energy:", font=("Bahnschrift", 15), fg_color="#2B2B2B")
+        self.SixMV = ctk.CTkRadioButton(self.SSDandDepth, value="6", variable=self.Energy, font=("Bahnschrift", 15), text="6 MV")
+        self.SixMVFFF = ctk.CTkRadioButton(self.SSDandDepth, value="6FFF", variable=self.Energy, font=("Bahnschrift", 15), text= "6 MV FFF")
 
         self.SSDLabel.grid(row=0, column=0, pady=(5,5), sticky="nse", padx=(5,5))
         self.SSDEntry.grid(row=0, column=1, pady=(5,5), sticky="nsw", padx=(5,5))
@@ -169,6 +174,9 @@ class CF(ctk.CTkFrame):
         self.TransXQVYEntry.grid(row=1, column=1, pady=(5,5), sticky="nsw", padx=(5,5))
         self.TransYQVXLabel.grid(row=1, column=2, pady=(5,5), sticky="nse", padx=(5,5))
         self.TransYQVXEntry.grid(row=1, column=3, pady=(5,5), sticky="nsw", padx=(5,5))
+        self.EnergyLabel.grid(row=2, column=0, pady=(5,5), sticky="nsw", padx=(45,5))
+        self.SixMV.grid(row=2, column=1, pady=(5,5), sticky="nsw", padx=(5,5))
+        self.SixMVFFF.grid(row=2, column=3, pady=(5,5), sticky="nsw", padx=(5,5))
         
         self.SSDandDepth.grid(row=1, column=0, columnspan=3, pady=(5,5), sticky="sew", padx=(5,5))
         self.dialframe.grid(row=1, column=0, columnspan=2, pady=(5,5), sticky="nsew", padx=(5,5))
@@ -181,10 +189,10 @@ class CF(ctk.CTkFrame):
             leaf_positions.append(leafpair.get_leaf_positions())
         jaw_positions = self.parent.C.jawpair.get_jaw_positions() 
         if self.selected_field == None:
-            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), len(self.sequence), self.TransYQVX.get(), self.TransXQVY.get()))
+            self.sequence.append(MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), self.Energy.get(), len(self.sequence), self.TransYQVX.get(), self.TransXQVY.get()))
         else:
             self.sequence[self.selected_field].delete()
-            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), self.selected_field, self.TransYQVX.get(), self.TransXQVY.get())
+            self.sequence[self.selected_field] = MLCField(self.fieldseqscrollcanvas, self, leaf_positions, jaw_positions, self.gantrydial.get(), self.collimatordial.get(), self.couchdial.get(), self.SSD.get(), self.Depth.get(), self.Energy.get(), self.selected_field, self.TransYQVX.get(), self.TransXQVY.get())
 
         self.selected_field = None
 
@@ -218,7 +226,7 @@ class CF(ctk.CTkFrame):
         planname = asksaveasfilename(filetypes=[("TOPAS Sequence", "*.txt")])
         cluster = askyesno("Cluster", "Define field for the IANVS cluster environment?")
         if planname == "": return
-        gantry_angles, collimator_angles, couch_angles, left_jaw_positions, right_jaw_positions, ssd, depth, transyqvx, transxqvy = [], [], [], [], [], [], [], [], []
+        gantry_angles, collimator_angles, couch_angles, left_jaw_positions, right_jaw_positions, ssd, depth, transyqvx, transxqvy, energy = [], [], [], [], [], [], [], [], [], []
         left_leaf_positions, right_leaf_positions, = [[] for i in range(len(self.sequence))], [[] for i in range(len(self.sequence))]
         for i, field in enumerate(self.sequence):
             gantry_angles += [field.gantry_angle]
@@ -228,6 +236,7 @@ class CF(ctk.CTkFrame):
             depth += [float(field.depth)]
             transyqvx += [float(field.transyqvx)]
             transxqvy += [float(field.transxqvy)]
+            energy += [field.energy]
             field.leaf_positions.reverse()
             for j in range(80):
                 left_leaf_positions[i] += [field.leaf_positions[j][0]]
@@ -240,7 +249,7 @@ class CF(ctk.CTkFrame):
             right_jaw_positions += [field.jaw_positions[0]]
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),os.pardir, ".currentplan"), "w") as f:
             f.write(planname+".txt")
-        CreateTopasArcSequence(planname, gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions, ssd, depth, transyqvx, transxqvy, cluster)
+        CreateTopasArcSequence(planname, gantry_angles, collimator_angles, couch_angles, left_leaf_positions, right_leaf_positions, left_jaw_positions, right_jaw_positions, ssd, depth, transyqvx, transxqvy, energy, cluster)
 
     def load_mlc_field(self, event=None, index=None, show=False):
 
