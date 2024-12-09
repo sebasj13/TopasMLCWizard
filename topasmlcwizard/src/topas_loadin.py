@@ -176,7 +176,7 @@ def field_size_calc_jaws(x, top=True):
     field_size = abs(x) * 0.2
     cil = 46.2
     r = 8.5  # 13.5 ?
-    sad = 100
+    sad = 98#100
     x1 = field_size * cil / (2 * sad)
 
     x2 = r * (1 / (np.cos(np.arctan(field_size / (2 * sad)))) - 1)
