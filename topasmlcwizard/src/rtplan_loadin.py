@@ -2,7 +2,7 @@ import pydicom as pd
 from .mlc_field import MLCField
 
 def load_fields_from_rtplan(rtplan_path, C, CF):
-    with pd.dcmread(rtplan_path) as ds:
+    with pd.dcmread(rtplan_path, force=True) as ds:
         control_point_fields = []
         gantry_angles = []
         collimator_angles = []
